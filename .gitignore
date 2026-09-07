@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# editors
+.vscode/
+.idea/
+
+# node (only used for the headless-Chrome verification harness)
+node_modules/
+package-lock.json
+
+# verification output
+/verify/out/
+*.log
