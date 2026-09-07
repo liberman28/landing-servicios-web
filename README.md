@@ -66,6 +66,27 @@ Tipografías: **Satoshi** (display + UI), **Hanken Grotesk** (botones), **Inter*
 Escala: h1 46/1.2 ls -1.38 · título de sección 38/45.6 ls -0.7 · título de card 30/42 ls -0.5 ·
 fila 24/33.6 ls -0.5 · cuerpo 18-20/25-28 · meta 14/16.8 ls -0.2.
 
+## Interacciones
+
+Reproducidas a partir de una auditoría de la referencia con Chrome headless. La referencia
+no declara **ninguna** transición CSS: Framer anima por JS con estilos inline, así que todo
+se midió por comportamiento (diferencia de píxeles y de estilo computado), no leyendo su CSS.
+
+| Interacción | Qué hace |
+|---|---|
+| Luz ambiental | Capa `fixed` al viewport que tiñe toda la página. Deriva con el **scroll** y con el **tiempo** (tres pools con duraciones distintas) |
+| Apilado de proyectos | Las cards son `sticky` en `top:210px`; la cubierta sube, se encoge y se apaga |
+| Botón de proyecto | Invierte a fondo claro con texto oscuro |
+| Fila de servicio | El título toma el color de acento |
+| Filas de proceso y notas | El título se aclara y la línea inferior gana contraste |
+| Chips de la bio | Rotación vertical de palabras + barrido de luz (`mask-position`, 5 s) |
+| Marquee | Desplazamiento infinito, se pausa al pasar el cursor |
+| Reveals | `IntersectionObserver`, una sola vez por elemento |
+| Acordeón | `grid-template-rows: 0fr → 1fr`, sin medir alturas a mano |
+| Enlaces | Nav y footer se atenúan |
+
+Todo respeta `prefers-reduced-motion: reduce`. El apilado se desactiva bajo 1000 px.
+
 ## Cómo se verificó
 
 El diseño no se ajustó "a ojo". Se midió el render de referencia con Chrome headless y se

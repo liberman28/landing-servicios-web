@@ -38,7 +38,7 @@
    RESET
    ============================================================ */
 *,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+html{-webkit-text-size-adjust:100%;overflow-x:clip}
 body{
   margin:0;
   background:var(--bg);
@@ -48,7 +48,7 @@ body{
   line-height:1.5;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
-  overflow-x:hidden;
+  overflow-x:clip;
 }
 img,svg{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
@@ -122,22 +122,35 @@ body.menu .nav-toggle span::after{top:0;transform:rotate(-45deg)}
    HERO
    ============================================================ */
 .hero{position:relative;padding-top:165px;padding-bottom:49px}
-/* three overlapping pools, matched to colours sampled off the reference render */
-.hero-glows{position:absolute;left:0;right:0;top:-40px;height:860px;pointer-events:none;z-index:0;overflow:hidden}
-.hero-glows i{position:absolute;display:block;border-radius:50%}
+/* Capa de luz ambiental: fija al viewport, acompaña toda la pagina.
+   A scrollY 0 cae exactamente donde caia la version absoluta, para no mover el hero. */
+.glow-layer{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.hero-glows{position:absolute;left:0;right:0;top:-40px;height:860px;pointer-events:none;
+  will-change:transform;transition:none}
+main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-index 100 */
+.hero-glows i{position:absolute;display:block;border-radius:50%;will-change:transform}
+@keyframes drift1{0%{transform:translate(0,0)}30%{transform:translate(105px,-46px)}
+  62%{transform:translate(-72px,38px)}100%{transform:translate(0,0)}}
+@keyframes drift2{0%{transform:translate(0,0)}35%{transform:translate(-88px,42px)}
+  70%{transform:translate(64px,-30px)}100%{transform:translate(0,0)}}
+@keyframes drift3{0%{transform:translate(0,0)}40%{transform:translate(70px,52px)}
+  75%{transform:translate(-95px,-24px)}100%{transform:translate(0,0)}}
 .g-blue{
+  animation:drift1 26s ease-in-out infinite;
   width:1400px;height:1000px;left:50%;margin-left:-295px;top:10px;
   background:radial-gradient(50% 50% at 50% 50%,
     rgba(50,94,120,1) 0%,rgba(50,94,120,.72) 20%,rgba(50,94,120,.45) 40%,
     rgba(50,94,120,.20) 62%,rgba(50,94,120,.05) 82%,rgba(50,94,120,0) 100%);
 }
 .g-grey{
+  animation:drift2 34s ease-in-out infinite;
   width:800px;height:780px;left:50%;margin-left:-820px;top:120px;
   background:radial-gradient(50% 50% at 50% 50%,
     rgba(38,54,58,1) 0%,rgba(38,54,58,.66) 26%,rgba(38,54,58,.32) 52%,
     rgba(38,54,58,.08) 78%,rgba(38,54,58,0) 100%);
 }
 .g-teal{
+  animation:drift3 30s ease-in-out infinite;
   width:1200px;height:760px;left:50%;margin-left:-680px;top:130px;
   background:radial-gradient(50% 50% at 50% 50%,
     rgba(15,36,38,1) 0%,rgba(15,36,38,.78) 28%,rgba(15,36,38,.46) 54%,
@@ -248,7 +261,7 @@ body.menu .nav-toggle span::after{top:0;transform:rotate(-45deg)}
    ============================================================ */
 .work{padding-top:64px}
 .case{
-  position:relative;
+  position:sticky;top:210px;
   min-height:500px;border-radius:32px;background:var(--panel);
   padding:60px 40px;margin-bottom:48px;
   display:grid;grid-template-columns:428px 428px;justify-content:space-between;
@@ -264,6 +277,8 @@ body.menu .nav-toggle span::after{top:0;transform:rotate(-45deg)}
 .case-3::before{background:#ba8ad6}
 .case-4::before{background:#0f6499}
 .case>*{position:relative;z-index:1}
+.case{transition:none;will-change:transform}
+@media (max-width:1000px){.case{position:relative;top:auto;transform:none!important}}
 .case-l{display:flex;flex-direction:column}
 .case-title{font-size:30px;font-weight:400;line-height:42px;letter-spacing:-.5px;color:var(--t-2)}
 .case-desc{margin-top:10px;font-size:18px;line-height:25.2px;color:var(--t-3)}
@@ -274,7 +289,7 @@ body.menu .nav-toggle span::after{top:0;transform:rotate(-45deg)}
   box-shadow:inset 0 -1px 0 rgba(47,43,67,.1),0 0 0 1px rgba(255,255,255,.12);
   transition:background .3s var(--ease),transform .3s var(--ease);
 }
-.btn-case:hover{background:rgba(255,255,255,.06);transform:translateY(-2px)}
+.btn-case:hover{background:#f2f2f2;color:#202020;box-shadow:none}
 .btn-case.is-soon{background:rgba(255,255,255,.15);color:var(--t-3);cursor:default;box-shadow:none}
 .btn-case.is-soon:hover{transform:none;background:rgba(255,255,255,.15)}
 
@@ -329,6 +344,19 @@ body.menu .nav-toggle span::after{top:0;transform:rotate(-45deg)}
 }
 .chip u{display:block;height:24px;overflow:hidden;text-decoration:none}
 .chip u span{display:block;height:24px;line-height:24px;font-size:18px;letter-spacing:0;white-space:nowrap;animation:roll 10s cubic-bezier(.8,0,.2,1) infinite}
+/* barrido de luz sobre el chip y su texto */
+.chip,.chip u span{
+  -webkit-mask-image:linear-gradient(to right,rgba(0,0,0,.45) 30%,#eee 50%,rgba(0,0,0,.45) 70%);
+  mask-image:linear-gradient(to right,rgba(0,0,0,.45) 30%,#eee 50%,rgba(0,0,0,.45) 70%);
+  -webkit-mask-size:250% 100%;mask-size:250% 100%;
+  animation-name:roll,shine;
+  animation-duration:10s,5s;
+  animation-timing-function:cubic-bezier(.8,0,.2,1),ease-in-out;
+  animation-iteration-count:infinite,infinite;
+}
+.chip{animation-name:shine;animation-duration:5s;animation-timing-function:ease-in-out}
+@keyframes shine{0%{mask-position:200% center;-webkit-mask-position:200% center}
+                 100%{mask-position:-100% center;-webkit-mask-position:-100% center}}
 @keyframes roll{
   0%,14%{transform:translateY(0)}
   20%,34%{transform:translateY(-24px)}
@@ -376,6 +404,8 @@ body.menu .nav-toggle span::after{top:0;transform:rotate(-45deg)}
 .tags{display:flex;gap:24px;font-size:14px;font-weight:500;letter-spacing:-.2px;color:var(--t-3)}
 .tags span{transition:color .25s}
 .services .row:hover .tags span{color:var(--t-1)}
+.services .row h3{transition:color .3s var(--ease)}
+.services .row:hover h3{color:var(--accent)}
 
 /* Skills */
 .chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;max-width:830px}
@@ -390,7 +420,12 @@ body.menu .nav-toggle span::after{top:0;transform:rotate(-45deg)}
 /* Experience */
 .exp{margin-top:5px}
 .exp .row{height:85px}
-.exp h3{font-size:24px;font-weight:400;line-height:33.6px;letter-spacing:-.5px;color:var(--t-3)}
+.exp .row{transition:border-color .3s var(--ease)}
+.exp .row:hover{border-color:rgba(255,255,255,.22)}
+.exp h3{font-size:24px;font-weight:400;line-height:33.6px;letter-spacing:-.5px;color:var(--t-3);transition:color .3s var(--ease)}
+.exp .row:hover h3{color:var(--t-1)}
+.exp .meta span{transition:color .3s var(--ease)}
+.exp .row:hover .meta span{color:var(--t-1)}
 .exp .meta{text-align:right}
 .exp .meta span{display:block;font-size:18px;line-height:25.2px;letter-spacing:-.3px;color:var(--t-3)}
 .exp .meta time{display:block;margin-top:2px;font-size:14px;font-weight:500;line-height:16.8px;letter-spacing:-.2px;color:var(--t-4)}
@@ -398,7 +433,8 @@ body.menu .nav-toggle span::after{top:0;transform:rotate(-45deg)}
 /* Articles */
 .posts{margin-top:0}
 .posts a.row{height:192px;transition:opacity .3s}
-.posts a.row:hover{opacity:.72}
+.posts a.row{transition:opacity .3s var(--ease),border-color .3s var(--ease)}
+.posts a.row:hover{opacity:.72;border-color:rgba(255,255,255,.22)}
 .post-l{display:flex;align-items:center;gap:32px}
 .thumb{width:192px;height:128px;border-radius:8px;flex:none;overflow:hidden}
 .th-1{background:linear-gradient(160deg,#8fa8c8 0%,#a9a5c4 45%,#c39aa4 100%)}
@@ -413,7 +449,7 @@ body.menu .nav-toggle span::after{top:0;transform:rotate(-45deg)}
   box-shadow:inset 0 -1px 0 rgba(47,43,67,.1),0 0 0 1px rgba(255,255,255,.10);
   transition:background .3s var(--ease),transform .3s var(--ease);
 }
-.btn-more:hover{background:rgba(255,255,255,.05);transform:translateY(-2px)}
+.btn-more:hover{background:rgba(255,255,255,.16);box-shadow:inset 0 -1px 0 rgba(47,43,67,.1),0 0 0 1px rgba(255,255,255,.2)}
 
 /* FAQ */
 .faq-list{margin-top:11px}
@@ -461,15 +497,15 @@ body.menu .nav-toggle span::after{top:0;transform:rotate(-45deg)}
   font-size:14px;font-weight:500;line-height:16.8px;letter-spacing:-.2px;color:var(--t-2);
 }
 .foot-bar nav{display:flex;gap:32px}
-.foot-bar nav a{color:var(--t-3);transition:color .25s}
-.foot-bar nav a:hover{color:var(--t-1)}
+.foot-bar nav a{color:var(--t-3);transition:opacity .25s var(--ease)}
+.foot-bar nav a:hover{opacity:.45}
 
 /* ============================================================
    HERO ENTRANCE
    ============================================================ */
 @keyframes up{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
 @keyframes glowin{from{opacity:0;transform:scale(1.35)}to{opacity:1;transform:none}}
-.hero-glows{animation:glowin 1.8s var(--ease) both}
+.glow-layer{animation:glowin 1.8s var(--ease) both}
 .avatar-wrap,.hero-title,.hero-sub,.hero-cta{animation:up .95s var(--ease) both}
 .avatar-wrap{animation-delay:.15s}
 .hero-title{animation-delay:.28s}
@@ -525,6 +561,9 @@ body.menu .nav-toggle span::after{top:0;transform:rotate(-45deg)}
 </style>
 </head>
 <body>
+<div class="glow-layer" aria-hidden="true">
+  <div class="hero-glows" id="glow"><i class="g-blue"></i><i class="g-grey"></i><i class="g-teal"></i></div>
+</div>
 <div class="grain" aria-hidden="true"></div>
 
 <!-- ===================== NAV ===================== -->
@@ -552,7 +591,6 @@ body.menu .nav-toggle span::after{top:0;transform:rotate(-45deg)}
 <main>
 <!-- ===================== HERO ===================== -->
 <section class="hero">
-  <div class="hero-glows" aria-hidden="true"><i class="g-blue"></i><i class="g-grey"></i><i class="g-teal"></i></div>
   <div class="wrap hero-inner">
     <div class="avatar-wrap">
       <div class="avatar" aria-hidden="true">
@@ -868,6 +906,58 @@ document.querySelectorAll('.faq-q').forEach(function(btn){
     if(!open){item.classList.add('open');btn.setAttribute('aria-expanded','true')}
   });
 });
+
+/* ---------- luz ambiental + apilado de cards, en un solo rAF ---------- */
+(function(){
+  var glow=document.getElementById('glow');
+  var cards=[].slice.call(document.querySelectorAll('.case'));
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var stack=matchMedia('(min-width: 1001px)').matches;
+  var TOP=210, RANGE=548, ticking=false, nat=[];
+
+  /* offsetTop de un elemento sticky ya trae el desplazamiento pegado,
+     asi que la posicion natural se mide desactivando sticky un instante */
+  function measure(){
+    var prev=cards.map(function(c){var v=c.style.position;c.style.position='static';return v});
+    nat=cards.map(function(c){return Math.round(c.getBoundingClientRect().top+window.pageYOffset)});
+    cards.forEach(function(c,i){c.style.position=prev[i]||''});
+  }
+
+  function frame(){
+    ticking=false;
+    var y=window.pageYOffset;
+
+    /* el punto de luz viaja de lado a lado con el scroll, no se queda quieto */
+    if(glow && !reduce){
+      glow.style.transform='translate3d('+(Math.sin(y/1400)*170).toFixed(1)+'px,'
+        +(Math.sin(y/900)*55).toFixed(1)+'px,0)';
+    }
+
+    /* cada card sube, se encoge y se apaga cuando la siguiente la cubre */
+    if(stack && !reduce){
+      for(var i=0;i<cards.length;i++){
+        var over=TOP-(nat[i]-y);
+        var t=over<=0?0:(over>RANGE?1:over/RANGE);
+        if(t){
+          cards[i].style.transform='translateY('+(-t*106).toFixed(1)+'px) scale('+(1-t*0.055).toFixed(4)+')';
+          cards[i].style.filter='brightness('+(1-t*0.22).toFixed(3)+')';
+        }else{
+          cards[i].style.transform='';
+          cards[i].style.filter='';
+        }
+      }
+    }
+  }
+  function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(frame); } }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',function(){
+    stack=matchMedia('(min-width: 1001px)').matches;
+    if(!stack) cards.forEach(function(c){c.style.transform='';c.style.filter=''});
+    measure(); onScroll();
+  },{passive:true});
+  addEventListener('load',function(){measure();onScroll()});
+  measure(); frame();
+})();
 
 /* ---------- nav ---------- */
 (function(){
