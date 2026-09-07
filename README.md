@@ -11,26 +11,40 @@ Abrir con doble clic o servir con cualquier static server.
 
 ## Contenido
 
+Landing de una sola página para **servicios de diseño y desarrollo web**: páginas web,
+tiendas online y automatizaciones.
+
 La estructura visual está tomada de una landing oscura de portfolio (referencia:
 `athos-dark.framer.ai`): layout, escala tipográfica, ritmo vertical, iluminación y movimiento.
 
 El contenido es propio, en español neutro, redactado a partir de
-[libermangonzalez.site](https://libermangonzalez.site) — casos de estudio, servicios, stack
-y principios de trabajo. Toda la gráfica (avatar, artworks, thumbnails, marcas de proyecto,
+[libermangonzalez.site/servicios](https://libermangonzalez.site/servicios/) — propuesta,
+proyectos, stack y proceso. Toda la gráfica (avatar, artworks, thumbnails, marcas de proyecto,
 iconos del marquee) está generada con CSS y SVG inline; no hay imágenes externas.
 
-Los enlaces a casos de estudio, contacto y redes apuntan al sitio real.
+### Secciones
 
-### Notas sobre secciones
+| Sección | Contenido |
+|---|---|
+| Hero | Propuesta de valor + CTA a contacto |
+| Marquee | Stack: Figma, WordPress, Elementor, HTML/CSS, Git, VS Code, GA4, Search Console |
+| Proyectos | Trico, Prexy, Ubi (con enlace) y Growthia (*Próximamente*) |
+| Bio | Quién, con qué y desde dónde |
+| Marcas | Guardianes del Amazonas, Growthia, Ubi |
+| Servicios | Diseño web · Desarrollo · E-commerce · Automatización |
+| Stack | 15 capacidades + "Más" |
+| Proceso | Descubrir · Definir · Diseñar · Construir y mejorar |
+| Notas | Tres posturas sobre tienda, proceso y checkout |
+| FAQ | Tipo de proyectos, proceso, modalidad |
 
-- **Casos** — Trico, Prexy y Ubi enlazan a su caso de estudio. El cuarto (Growthia) está
-  marcado como *Próximamente*; cambiar `is-soon` por un `<a>` cuando exista la página.
-- **Proyectos** — bajo la bio hay tres marcas con una línea factual cada una, no testimonios.
-  Si consigues citas reales de clientes, ese es el lugar.
-- **Experiencia** — listada por proyecto y alcance. Si prefieres un CV cronológico, cambiar
-  `<time>` por fechas.
-- **Ideas** — usa los tres principios de la página *Sobre mí*. Cuando exista el blog,
-  reemplazar el índice `01/02/03` por fechas y apuntar a cada post.
+### Pendientes
+
+- **Growthia** está marcado como *Próximamente*: cambiar `is-soon` por un `<a>` cuando exista
+  la página de caso.
+- **Marcas de proyecto** son líneas factuales, no testimonios. Si consigues citas reales de
+  clientes, ese es el lugar.
+- **Notas** enlaza a `/servicios/`. Cuando exista el blog, apuntar a cada post y cambiar el
+  índice `01/02/03` por fechas.
 
 ## Sistema de diseño
 
