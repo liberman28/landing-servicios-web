@@ -3,6 +3,8 @@
 Recreación del diseño de una landing oscura de portfolio (referencia: `athos-dark.framer.ai`)
 como **un único archivo HTML autocontenido**, sin build, sin framework y sin dependencias locales.
 
+**En vivo:** https://liberman28.github.io/landing-servicios-web/
+
 ```
 index.html   ← todo: markup + CSS + JS
 ```
