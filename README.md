@@ -87,6 +87,45 @@ se midió por comportamiento (diferencia de píxeles y de estilo computado), no 
 
 Todo respeta `prefers-reduced-motion: reduce`. El apilado se desactiva bajo 1000 px.
 
+## Tema de WordPress (en curso)
+
+El diseño se está convirtiendo en un tema propio, en `theme/liberman/`. Elementor se retira:
+la landing pasa a ser la portada y el resto del sitio hereda el mismo sistema.
+
+```
+theme/liberman/
+  style.css          CSS de la portada + estilos de páginas internas
+  functions.php      soportes, menús, encolado, tipo "Proyecto", métricas, paginación
+  header.php         capa de luz + grano + nav
+  footer.php         bloque de cierre + barra inferior
+  front-page.php     la landing (proyectos y notas ya salen de la base de datos)
+  index.php          listado del blog
+  single.php         entrada
+  page.php           página estándar
+  archive-caso.php   listado de proyectos (reutiliza las cards apiladas)
+  single-caso.php    proyecto, con sus métricas
+  archive.php  search.php  404.php
+  assets/app.js      interacciones
+```
+
+### Decisiones tomadas
+
+- **Los proyectos son un tipo de contenido propio** (`caso`) con ruta `casos-de-estudio`,
+  la que ya está indexada. Las métricas de la card (`+2.000`, `6 pasos`) son campos del
+  editor, así que las cards se generan solas.
+- **El menú se imprime como enlaces sueltos**, no como `<ul><li>`: el CSS del nav espera
+  `<a>` como hijos directos del contenedor flex. Hay respaldo por si aún no existe el menú.
+- **Título y subtítulo del hero, y el bloque de cierre, salen del personalizador**, con el
+  texto actual como valor por defecto.
+
+### Pendiente
+
+- [ ] Verificar el render con un *shim* de PHP y pasar el harness de 28 anclas sobre la salida
+- [ ] `comments.php` (ahora `single.php` cae en la plantilla de compatibilidad de WordPress)
+- [ ] Estilar el formulario de contacto con los tokens del tema
+- [ ] Plan de migración: importar las páginas actuales, revisar permalinks y retirar Elementor
+- [ ] Empaquetar el tema en `.zip` para subirlo
+
 ## Cómo se verificó
 
 El diseño no se ajustó "a ojo". Se midió el render de referencia con Chrome headless y se
