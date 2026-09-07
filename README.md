@@ -9,14 +9,28 @@ index.html   ← todo: markup + CSS + JS
 
 Abrir con doble clic o servir con cualquier static server.
 
-## Qué es y qué no es
+## Contenido
 
-Es una recreación del **diseño**: layout, escala tipográfica, ritmo vertical, iluminación,
-sistema de color y movimiento.
+La estructura visual está tomada de una landing oscura de portfolio (referencia:
+`athos-dark.framer.ai`): layout, escala tipográfica, ritmo vertical, iluminación y movimiento.
 
-No es una copia del **contenido**. Los textos son propios y toda la gráfica —avatar, artworks
-de los case studies, thumbnails, logos de clientes, iconos del marquee— está generada con CSS
-y SVG inline en vez de enlazar los assets alojados del sitio original.
+El contenido es propio, en español neutro, redactado a partir de
+[libermangonzalez.site](https://libermangonzalez.site) — casos de estudio, servicios, stack
+y principios de trabajo. Toda la gráfica (avatar, artworks, thumbnails, marcas de proyecto,
+iconos del marquee) está generada con CSS y SVG inline; no hay imágenes externas.
+
+Los enlaces a casos de estudio, contacto y redes apuntan al sitio real.
+
+### Notas sobre secciones
+
+- **Casos** — Trico, Prexy y Ubi enlazan a su caso de estudio. El cuarto (Growthia) está
+  marcado como *Próximamente*; cambiar `is-soon` por un `<a>` cuando exista la página.
+- **Proyectos** — bajo la bio hay tres marcas con una línea factual cada una, no testimonios.
+  Si consigues citas reales de clientes, ese es el lugar.
+- **Experiencia** — listada por proyecto y alcance. Si prefieres un CV cronológico, cambiar
+  `<time>` por fechas.
+- **Ideas** — usa los tres principios de la página *Sobre mí*. Cuando exista el blog,
+  reemplazar el índice `01/02/03` por fechas y apuntar a cada post.
 
 ## Sistema de diseño
 
