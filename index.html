@@ -32,6 +32,7 @@
   --alt:"Hanken Grotesk","Hanken Grotesk Placeholder",-apple-system,sans-serif;
   --ui:"Inter","Inter Placeholder",-apple-system,sans-serif;
   --ease:cubic-bezier(.22,.61,.36,1);
+  --ease-spring:cubic-bezier(.34,1.26,.64,1); /* ~ spring bounce .2 de la referencia */
 }
 
 /* ============================================================
@@ -75,6 +76,10 @@ ul{margin:0;padding:0;list-style:none}
 .rv.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){
   .rv{opacity:1!important;transform:none!important;transition:none}
+  .fcard,.fcard-visual img,.fcard-rule{transition:none}
+  .trail{animation:none;stroke-dashoffset:0}
+  .ring .spin{animation:none}
+  .prob-card{opacity:1!important;transform:none!important}
   *{animation-duration:.001ms!important;animation-iteration-count:1!important}
 }
 
@@ -158,24 +163,14 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
 }
 .hero-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center}
 
-.avatar-wrap{position:relative;width:108px;margin-bottom:46px}
+.avatar-wrap{position:relative;width:140px;margin-bottom:46px}
 .avatar{
-  width:108px;height:108px;border-radius:50%;overflow:hidden;
-  background:
-    radial-gradient(60% 55% at 50% 26%,#f0d9c6 0%,#d9b699 55%,#b58e6f 100%),
-    #c9a184;
+  width:140px;height:140px;border-radius:50%;overflow:hidden;
+  background:#1f2830;
   box-shadow:0 0 0 1px rgba(255,255,255,.18),0 0 0 6px rgba(255,255,255,.04);
   position:relative;
 }
-.avatar svg{position:absolute;inset:0;width:100%;height:100%}
-.badge{
-  position:absolute;left:50%;bottom:-20px;transform:translateX(-50%);
-  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
-  height:38px;padding:0 12px;border-radius:10px;background:#fff;color:#222;
-  font-family:var(--ui);font-size:14px;font-weight:600;line-height:15.4px;
-  box-shadow:0 4px 16px rgba(0,0,0,.35);
-}
-.badge svg{width:14px;height:16px;flex:none}
+.avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 22%}
 
 .hero-title{
   max-width:600px;
@@ -235,18 +230,15 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
 }
 .tools::before{left:0;background:linear-gradient(90deg,#000 10%,transparent)}
 .tools::after{right:0;background:linear-gradient(270deg,#000 10%,transparent)}
-.mq{display:flex;width:max-content;gap:64px;animation:mq 46s linear infinite}
+.mq{display:flex;align-items:center;width:max-content;gap:64px;animation:mq 46s linear infinite}
 .tools:hover .mq{animation-play-state:paused}
 @keyframes mq{to{transform:translateX(calc(-50% - 32px))}}
 .tile{
-  position:relative;flex:none;width:86px;height:86px;border-radius:32px;
-  display:grid;place-items:center;
-  background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.028));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
-  transition:transform .35s var(--ease);
+  position:relative;flex:none;height:50px;display:grid;place-items:center;
+  opacity:.72;transition:transform .35s var(--ease),opacity .35s var(--ease);
 }
-.tile:hover{transform:translateY(-6px)}
-.tile svg{width:42px;height:42px}
+.tile:hover{transform:translateY(-6px);opacity:1}
+.tile img{height:28px;width:auto;display:block}
 .tip{
   position:absolute;bottom:calc(100% + 12px);left:50%;transform:translate(-50%,6px);
   width:200px;padding:9px 12px;border-radius:8px;background:rgba(230,230,230,.96);color:#111;
@@ -255,6 +247,159 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
 }
 .tip b{display:block;font-size:13px;font-weight:600;margin-bottom:2px}
 .tile:hover .tip{opacity:1;transform:translate(-50%,0)}
+
+/* ============================================================
+   PROBLEMA
+   Composición y vocabulario de movimiento de clipcut.framer.ai:
+   píldora centrada, titular palabra por palabra (stagger .05s / 1.4s /
+   ease .44,0,.56,1), tarjetas con entrada spring escalonada, contadores
+   de 2s y anillo en rotación lineal de 3s. Paleta y tipografía nuestras.
+   ============================================================ */
+#problema{text-align:center}
+.prob-pill{
+  display:inline-flex;align-items:center;gap:10px;height:34px;padding:0 16px;
+  border-radius:99px;background:var(--panel);border:1px solid var(--line);
+  font-family:var(--ui);font-size:13px;font-weight:500;letter-spacing:.02em;color:var(--t-2);
+}
+.prob-pill::before,.prob-pill::after{content:"";width:14px;height:1px;background:var(--accent)}
+.prob-title{
+  margin:26px auto 0;max-width:760px;
+  font-size:46px;font-weight:400;line-height:55px;letter-spacing:-1.38px;color:var(--t-1);
+  text-wrap:balance;
+}
+.prob-title .w{display:inline-block;overflow:hidden;vertical-align:bottom}
+/* visible por defecto: si la animación no corre, el titular igual se lee */
+.prob-title .w i{display:inline-block;font-style:normal}
+#problema.on .prob-title .w i{animation:wordUp 1.4s cubic-bezier(.44,0,.56,1) both}
+@keyframes wordUp{from{transform:translateY(105%);opacity:0}to{transform:translateY(0);opacity:1}}
+.prob-sub{margin:22px auto 0;max-width:600px;font-size:18px;line-height:25.2px;color:var(--t-4)}
+
+.prob-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px;text-align:left}
+.prob-card{
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 18px 26px;
+  opacity:0;transform:translateY(50px);
+  transition:opacity .55s var(--ease-spring),transform .55s var(--ease-spring),border-color .4s var(--ease);
+}
+#problema.on .prob-card{opacity:1;transform:none}
+#problema.on .prob-card:nth-child(2){transition-delay:.12s}
+#problema.on .prob-card:nth-child(3){transition-delay:.24s}
+.prob-card:hover{border-color:rgba(255,255,255,.18)}
+.prob-card h3{margin:22px 0 0;font-size:24px;font-weight:500;line-height:29px;letter-spacing:-.5px;color:var(--t-1)}
+.prob-card p{margin:10px 0 0;font-size:15px;line-height:21px;color:var(--t-4)}
+
+/* --- lienzo del widget --- */
+.viz{
+  position:relative;height:210px;border-radius:10px;overflow:hidden;padding:16px;
+  background:radial-gradient(120% 100% at 50% 0,rgba(255,108,10,.10),transparent 62%),var(--panel-deep);
+  border:1px solid var(--line-soft);
+}
+.viz-lbl{font-family:var(--ui);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--t-4)}
+.viz-num{margin-top:2px;font-size:34px;font-weight:500;line-height:1;letter-spacing:-1px;color:var(--t-1);font-variant-numeric:tabular-nums}
+.viz-foot{position:absolute;left:16px;right:16px;bottom:14px;display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.viz-tag{
+  display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:7px;
+  background:rgba(255,108,10,.14);border:1px solid rgba(255,108,10,.30);
+  font-family:var(--ui);font-size:11px;font-weight:500;color:#ffb37a;white-space:nowrap;
+}
+/* barras */
+.bars{position:absolute;left:16px;right:16px;bottom:44px;height:86px;display:flex;align-items:flex-end;gap:7px}
+.bars span{flex:1;border-radius:3px 3px 0 0;background:linear-gradient(180deg,rgba(255,108,10,.55),rgba(255,108,10,.06))}
+.bars b{position:absolute;left:0;right:0;bottom:6px;height:1px;background:var(--accent);opacity:.9}
+/* anillo */
+.ring{position:absolute;inset:0;display:grid;place-items:center}
+.ring svg{width:150px;height:150px;transform:rotate(-90deg)}
+.ring .trackc{fill:none;stroke:rgba(255,255,255,.10);stroke-width:9}
+.ring .arc{fill:none;stroke:var(--accent);stroke-width:9;stroke-linecap:round;
+  stroke-dasharray:408;stroke-dashoffset:408;transition:stroke-dashoffset 2s var(--ease)}
+#problema.on .ring .arc{stroke-dashoffset:139}
+.ring .spin{fill:none;stroke:rgba(255,108,10,.35);stroke-width:1;stroke-dasharray:5 9;
+  transform-origin:50% 50%;animation:spin 3s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ring-mid{position:absolute;text-align:center}
+/* semana */
+.week{position:absolute;left:16px;right:16px;top:74px;display:flex;justify-content:space-between;gap:6px}
+.week i{flex:1;height:26px;border-radius:6px;background:rgba(255,255,255,.07);display:block}
+.week i.hit{background:rgba(255,108,10,.55)}
+.wk-days{position:absolute;left:16px;right:16px;top:56px;display:flex;justify-content:space-between;
+  font-family:var(--ui);font-size:9px;letter-spacing:.05em;color:var(--t-4)}
+.wk-days span{flex:1;text-align:center}
+.bar-out{position:absolute;left:16px;right:16px;bottom:44px;height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.bar-in{height:100%;width:0;border-radius:99px;background:var(--accent);transition:width 2s var(--ease)}
+#problema.on .bar-in{width:30%}
+
+.hero-proof{margin-top:28px;font-size:14px;line-height:16.8px;letter-spacing:-.2px;color:var(--t-4)}
+
+/* ============================================================
+   PROCESS PATH
+   Mecanismo tomado de animatedprocesspath.framer.website: una pista
+   punteada tenue + una copia iluminada enmascarada por un segmento que
+   recorre la curva (pathLength=1, dash .3/.7, dashoffset 0 -> -1,
+   6.44s lineal infinito). Aquí el segmento va en color de acento.
+   ============================================================ */
+.proc-points{display:flex;flex-wrap:wrap;gap:12px 30px;margin:28px 0 0;padding:0;list-style:none}
+.proc-points li{display:flex;align-items:center;gap:9px;font-size:16px;line-height:19.2px;color:var(--t-2)}
+.proc-points svg{width:17px;height:17px;flex:none}
+
+.path-wrap{position:relative;margin-top:24px;height:576px}
+.path-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.track{fill:none;stroke:rgba(255,255,255,.16);stroke-width:1;stroke-dasharray:7 7;stroke-linecap:round}
+.track-lit{fill:none;stroke:var(--accent);stroke-width:1.5;stroke-dasharray:7 7;stroke-linecap:round}
+.trail{fill:none;stroke:#fff;stroke-width:18;stroke-linecap:round;stroke-dasharray:.3 .7;
+  animation:trail 6.44s linear infinite;will-change:stroke-dashoffset}
+@keyframes trail{from{stroke-dashoffset:0}to{stroke-dashoffset:-1}}
+.node{fill:var(--t-2)}
+.node-ring{fill:none;stroke:rgba(255,255,255,.18);stroke-width:1}
+
+.steps{position:absolute;inset:0;margin:0;padding:0;list-style:none}
+.step{position:absolute;width:23.125%}
+.step:nth-child(1){left:0;top:100px}
+.step:nth-child(2){left:25.625%;top:196px}
+.step:nth-child(3){left:51.25%;top:292px}
+.step:nth-child(4){left:76.875%;top:388px}
+.step h3{margin:0;font-size:20px;font-weight:500;line-height:24px;letter-spacing:-.2px;color:var(--t-1)}
+.step h3 i{font-style:normal;color:var(--t-4);margin-right:7px}
+.step p{margin:9px 0 0;font-size:15px;line-height:21px;color:var(--t-4)}
+
+/* ============================================================
+   SERVICE FEATURE CARDS
+   Anatomía tomada de motionfeaturecards.framer.ai (medida en vivo:
+   tarjeta 388x460, radio 12, visual 288 a sangre, título centrado 20/24,
+   regla 158x2, descripción 16/19.2). Traducida a la paleta oscura.
+   ============================================================ */
+.fcards{
+  margin-top:56px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+}
+.fcard{
+  position:relative;background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;padding:24px 0;overflow:clip;
+  transition:transform .4s var(--ease-spring),border-color .4s var(--ease-spring);
+}
+.fcard:hover{transform:translateY(-6px);border-color:rgba(255,255,255,.18)}
+.fcard-eyebrow{
+  padding:0 24px;font-size:16px;font-weight:500;line-height:19.2px;color:var(--t-4);
+}
+.fcard-visual{position:relative;margin-top:10px;height:288px;overflow:hidden}
+.fcard-visual img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transform:scale(1.09);filter:saturate(.8) brightness(.78);
+  transition:transform 1.2s var(--ease),filter .6s var(--ease);
+}
+.fcard:hover .fcard-visual img{transform:scale(1.15);filter:none}
+/* la imagen se funde con la tarjeta por abajo, como la luz del resto del sitio */
+.fcard-visual::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,transparent 55%,var(--panel));
+}
+.fcard-body{padding:26px 24px 0;text-align:center}
+.fcard-body h3{
+  font-size:20px;font-weight:500;line-height:24px;letter-spacing:-.2px;color:var(--t-1);
+}
+.fcard-rule{
+  display:block;width:158px;height:2px;margin:10px auto 12px;background:var(--line);
+  transition:background .4s var(--ease-spring),width .4s var(--ease-spring);
+}
+.fcard:hover .fcard-rule{width:64px;background:var(--accent)}
+.fcard-body p{font-size:16px;font-weight:500;line-height:19.2px;color:var(--t-4)}
 
 /* ============================================================
    WORK / CASE CARDS
@@ -369,11 +514,16 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
 /* ============================================================
    CLIENTS
    ============================================================ */
-.clients{position:relative;padding-top:223px;padding-bottom:96px}
-.clients-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;text-align:center}
-.client-logo{height:48px;display:flex;align-items:center;justify-content:center;color:#fff}
-.client-logo svg{height:34px;width:auto}
-.client q{display:block;margin-top:45px;font-size:20px;line-height:28px;color:var(--t-1);quotes:none}
+.clients{position:relative;padding-top:150px;padding-bottom:118px;overflow:hidden}
+.clients::before,.clients::after{content:"";position:absolute;top:0;bottom:0;width:190px;z-index:2;pointer-events:none}
+.clients::before{left:0;background:linear-gradient(90deg,#000 10%,transparent)}
+.clients::after{right:0;background:linear-gradient(270deg,#000 10%,transparent)}
+.cmq{display:flex;align-items:center;width:max-content;gap:96px;animation:cmq 34s linear infinite}
+.clients:hover .cmq{animation-play-state:paused}
+@keyframes cmq{to{transform:translateX(calc(-50% - 48px))}}
+.cbrand{flex:none;display:flex;align-items:center;color:#fff;opacity:.82;transition:opacity .35s var(--ease)}
+.cbrand:hover{opacity:1}
+.cbrand svg{height:30px;width:auto}
 
 /* ============================================================
    SHARED SECTION HEAD
@@ -390,6 +540,7 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
 }
 .head h2{font-size:38px;font-weight:400;line-height:45.6px;letter-spacing:-.7px;color:var(--t-1)}
 .sec-desc{margin-top:24px;max-width:640px;font-size:24px;line-height:33.6px;color:var(--t-2)}
+.sec-lead{margin-top:16px;max-width:640px;font-size:18px;line-height:25.2px;color:var(--t-4)}
 
 /* rows with a hairline underneath */
 .row{
@@ -473,14 +624,14 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
    ============================================================ */
 .foot{padding-top:234px;padding-bottom:81px}
 .cta{
-  max-width:1024px;margin:0 auto;height:405px;border-radius:256px;
+  max-width:1024px;margin:0 auto;min-height:430px;border-radius:256px;
   background:linear-gradient(180deg,#2a3f4c,#2a3f4c);
   display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-  padding:0 40px;
+  padding:52px 80px;
 }
 .cta h2{max-width:460px;font-size:38px;font-weight:400;line-height:45.6px;letter-spacing:-.7px;color:var(--t-1)}
 .btn-hire{
-  display:inline-flex;align-items:center;gap:12px;margin-top:32px;
+  display:inline-flex;align-items:center;gap:12px;margin-top:28px;
   height:52px;padding:0 22px;border-radius:14px;background:#1b1b1b;
   font-family:var(--ui);font-size:18px;font-weight:600;color:#fff;
   box-shadow:0 8px 24px rgba(0,0,0,.35);
@@ -488,6 +639,8 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
 }
 .btn-hire:hover{transform:translateY(-2px);background:#232323}
 .btn-hire svg{width:22px;height:22px;flex:none}
+.cta-sub{max-width:480px;margin-top:18px;font-size:18px;line-height:25.2px;color:rgba(255,255,255,.72)}
+.cta-note{margin-top:20px;font-size:14px;line-height:16.8px;color:rgba(255,255,255,.5)}
 .cta-by{display:flex;align-items:center;gap:10px;margin-top:22px;font-size:14px;color:rgba(255,255,255,.72)}
 .cta-by i{width:24px;height:24px;border-radius:50%;background:radial-gradient(60% 55% at 50% 28%,#f0d9c6,#b58e6f);box-shadow:0 0 0 1px rgba(255,255,255,.25)}
 
@@ -517,6 +670,10 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
    RESPONSIVE
    ============================================================ */
 @media (max-width:1000px){
+  .prob-cards{grid-template-columns:1fr;max-width:420px;margin-left:auto;margin-right:auto}
+  .prob-title{font-size:36px;line-height:43px;letter-spacing:-.9px}
+  .path-wrap{height:640px}
+  .fcards{grid-template-columns:repeat(2,1fr)}
   .case{grid-template-columns:1fr;gap:36px;padding:40px 28px;min-height:0}
   .shot{width:100%;height:auto;aspect-ratio:428/243}
   .case-cta{margin-top:8px}
@@ -524,6 +681,14 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
   .bio-copy{font-size:20px;line-height:30px}
 }
 @media (max-width:860px){
+  .path-wrap{height:auto;margin-top:44px;padding-left:30px}
+  .path-svg{display:none}
+  .path-wrap::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:1px;
+    background:repeating-linear-gradient(180deg,rgba(255,255,255,.16) 0 7px,transparent 7px 14px)}
+  .steps{position:static;display:grid;gap:30px}
+  .path-wrap .step{position:relative;left:auto;top:auto;width:auto}
+  .step::before{content:"";position:absolute;left:-30px;top:7px;width:11px;height:11px;
+    border-radius:50%;background:var(--t-2)}
   .nav-links{
     position:fixed;inset:101px 0 auto;flex-direction:column;align-items:stretch;gap:0;
     padding:8px 24px 24px;background:rgba(8,8,8,.96);backdrop-filter:blur(14px);
@@ -546,6 +711,8 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
   .faq-q{height:auto;padding:26px 0}
 }
 @media (max-width:560px){
+  .fcards{grid-template-columns:1fr}
+  .fcard-visual{height:240px}
   .hero{padding-top:132px}
   .hero-title{font-size:32px;line-height:1.18;letter-spacing:-.7px}
   .hero-sub{font-size:17px;line-height:25px}
@@ -576,11 +743,9 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
       </svg>
     </a>
     <nav class="nav-links" id="menu">
-      <a href="#work">Proyectos</a>
       <a href="#services">Servicios</a>
-      <a href="#skills">Stack</a>
+      <a href="#work">Proyectos</a>
       <a href="#experience">Proceso</a>
-      <a href="#blog">Notas</a>
       <a href="#faq">FAQ</a>
       <a href="https://libermangonzalez.site/contacto/" class="nav-pill">Hablemos</a>
     </nav>
@@ -589,32 +754,13 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
 </header>
 
 <main>
+
 <!-- ===================== HERO ===================== -->
 <section class="hero">
   <div class="wrap hero-inner">
     <div class="avatar-wrap">
-      <div class="avatar" aria-hidden="true">
-        <svg viewBox="0 0 108 108">
-          <defs>
-            <clipPath id="cc"><circle cx="54" cy="54" r="54"/></clipPath>
-          </defs>
-          <g clip-path="url(#cc)">
-            <rect width="108" height="108" fill="#1f2830"/>
-            <circle cx="54" cy="30" r="34" fill="#2b3742" opacity=".55"/>
-            <path d="M6 108c0-20 21-32 48-32s48 12 48 32H6Z" fill="#3a4a56"/>
-            <path d="M54 74c10 0 16 8 16 17v17H38V91c0-9 6-17 16-17Z" fill="#556775"/>
-            <ellipse cx="54" cy="44" rx="24" ry="27" fill="#e9c8ac"/>
-            <path d="M54 14c16 0 25 10 25 22 0 5-1 10-2 10-1-8-5-14-11-15-9-1-16 3-24 1-5-1-8-4-8-4 0-8 5-14 20-14Z" fill="#2c2118"/>
-            <ellipse cx="45" cy="45" rx="7" ry="5.5" fill="none" stroke="#1d1d1d" stroke-width="1.8"/>
-            <ellipse cx="64" cy="45" rx="7" ry="5.5" fill="none" stroke="#1d1d1d" stroke-width="1.8"/>
-            <path d="M52 45h5" stroke="#1d1d1d" stroke-width="1.8"/>
-            <path d="M46 58c5 3 11 3 16 0" stroke="#c69a7c" stroke-width="2" fill="none" stroke-linecap="round"/>
-          </g>
-        </svg>
-      </div>
-      <div class="badge">
-        <svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="4" fill="#16a34a"/></svg>
-        Disponible para proyectos
+      <div class="avatar">
+        <img src="assets/foto-brand.webp" width="140" height="140" alt="Retrato de Liberman González" fetchpriority="high" decoding="async">
       </div>
     </div>
 
@@ -625,12 +771,127 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
       <a href="https://libermangonzalez.site/contacto/" class="btn-glow">Cuéntame tu proyecto</a>
       <a href="#work" class="btn-ghost">Ver proyectos</a>
     </div>
+
+    <p class="hero-proof">3 años · proyectos en producción · remoto desde Medellín</p>
   </div>
 </section>
 
-<!-- ===================== TOOL MARQUEE ===================== -->
-<section class="tools" aria-label="Tools I work with">
-  <div class="mq" id="mq"></div>
+<!-- ===================== CLIENTS ===================== -->
+<section class="clients" aria-label="Marcas con las que he trabajado">
+  <div class="cmq" id="cmq">
+    <div class="cbrand"><svg viewBox="0 0 200 34" fill="currentColor" aria-hidden="true"> <path d="M4 24 12 4l8 20-8-6-8 6Z"/><path d="M20 24 28 8l6 16-6-4-8 4Z" opacity=".6"/> <text x="42" y="26" font-family="Satoshi,sans-serif" font-size="24" font-weight="700">Guardianes</text> </svg></div>
+    <div class="cbrand"><svg viewBox="0 0 180 34" fill="currentColor" aria-hidden="true"> <path d="M17 2a15 15 0 1 0 15 15h-6a9 9 0 1 1-9-9V2Z"/> <text x="40" y="26" font-family="Satoshi,sans-serif" font-size="24" font-weight="700">Growthia</text> </svg></div>
+    <div class="cbrand"><svg viewBox="0 0 120 34" fill="currentColor" aria-hidden="true"> <path d="M17 2a15 15 0 0 1 0 30 15 15 0 0 1 0-30Zm0 6a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/> <circle cx="17" cy="17" r="4"/> <text x="40" y="26" font-family="Satoshi,sans-serif" font-size="24" font-weight="700">Ubi</text> </svg></div>
+  </div>
+</section>
+
+<!-- ===================== PROBLEMA ===================== -->
+<section class="sec wrap" id="problema">
+  <span class="prob-pill">El problema</span>
+  <h2 class="prob-title">Tu sitio ya existe, ¿y aun así no te llega trabajo?</h2>
+  <p class="prob-sub">No es falta de presencia. Es lo que pasa después de que alguien entra: no encuentra qué hacer, no confía, o se topa con un paso de más.</p>
+
+  <div class="prob-cards">
+
+    <article class="prob-card">
+      <div class="viz">
+        <div class="viz-lbl">Visitas al mes</div>
+        <div class="viz-num" data-count="1240">0</div>
+        <div class="bars">
+          <span style="height:62%"></span>
+          <span style="height:74%"></span>
+          <span style="height:58%"></span>
+          <span style="height:81%"></span>
+          <span style="height:69%"></span>
+          <span style="height:77%"></span>
+          <b></b>
+        </div>
+        <div class="viz-foot">
+          <span class="viz-tag">3 mensajes recibidos</span>
+        </div>
+      </div>
+      <h3>Visitas que no preguntan</h3>
+      <p>Tu sitio recibe tráfico y aun así nadie escribe. Se ve, pero no genera una sola conversación.</p>
+    </article>
+
+    <article class="prob-card">
+      <div class="viz">
+        <div class="ring">
+          <svg viewBox="0 0 150 150" aria-hidden="true">
+            <circle class="trackc" cx="75" cy="75" r="65"/>
+            <circle class="spin" cx="75" cy="75" r="53"/>
+            <circle class="arc" cx="75" cy="75" r="65"/>
+          </svg>
+          <div class="ring-mid">
+            <div class="viz-num"><span data-count="66" data-suffix="%">0%</span></div>
+            <div class="viz-lbl">Abandono</div>
+          </div>
+        </div>
+        <div class="viz-foot">
+          <span class="viz-tag">Se pierde en el checkout</span>
+        </div>
+      </div>
+      <h3>El carrito se abandona</h3>
+      <p>La tienda tiene visitas, pero el checkout confunde y el pedido se cae en el último paso.</p>
+    </article>
+
+    <article class="prob-card">
+      <div class="viz">
+        <div class="viz-lbl">Cambios de esta semana</div>
+        <div class="wk-days"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+        <div class="week"><i class="hit"></i><i></i><i></i><i class="hit"></i><i></i><i></i><i></i></div>
+        <div class="bar-out"><div class="bar-in"></div></div>
+        <div class="viz-foot">
+          <span class="viz-tag">Pedidos copiados a mano</span>
+        </div>
+      </div>
+      <h3>Todo depende de alguien más</h3>
+      <p>Cambiar un precio o una foto pasa por otra persona, y los pedidos siguen pasándose a una planilla.</p>
+    </article>
+
+  </div>
+</section>
+
+<!-- ===================== WHAT I DO ===================== -->
+<section class="sec wrap" id="services">
+  <div class="head rv"><h2>Servicios</h2></div>
+  <p class="sec-desc rv">Desde una landing para validar una idea hasta una tienda online lista para vender.</p>
+  <p class="sec-lead rv">Cada proyecto comienza entendiendo qué necesita lograr tu negocio. A partir de ahí definimos una solución digital con un alcance claro, una experiencia coherente y una ruta real hacia el lanzamiento.</p>
+  <div class="fcards">
+    <article class="fcard rv">
+      <p class="fcard-eyebrow">Diseño</p>
+      <div class="fcard-visual">
+        <img src="assets/servicio-01.webp" width="742" height="508" alt="Interfaz de descubrimiento y diseño: buscador, ideas y componentes" loading="lazy" decoding="async">
+      </div>
+      <div class="fcard-body">
+        <h3>Diseño y desarrollo web</h3>
+        <span class="fcard-rule" aria-hidden="true"></span>
+        <p>Diseño y construyo páginas web y tiendas online claras, rápidas y pensadas para hacer crecer tu negocio.</p>
+      </div>
+    </article>
+    <article class="fcard rv">
+      <p class="fcard-eyebrow">Desarrollo</p>
+      <div class="fcard-visual">
+        <img src="assets/servicio-02.webp" width="742" height="508" alt="Editor de código con el esquema de datos de un proyecto" loading="lazy" decoding="async">
+      </div>
+      <div class="fcard-body">
+        <h3>Aplicaciones web y mobile</h3>
+        <span class="fcard-rule" aria-hidden="true"></span>
+        <p>Transformo procesos e ideas en aplicaciones web y mobile listas para usar.</p>
+      </div>
+    </article>
+    <article class="fcard rv">
+      <p class="fcard-eyebrow">Automatización</p>
+      <div class="fcard-visual">
+        <img src="assets/servicio-03.webp" width="742" height="508" alt="Gráfica de crecimiento con dos series de datos" loading="lazy" decoding="async">
+      </div>
+      <div class="fcard-body">
+        <h3>Automatización y medición</h3>
+        <span class="fcard-rule" aria-hidden="true"></span>
+        <p>Conecto tus herramientas y automatizo tareas para que tu equipo ahorre tiempo y trabaje mejor.</p>
+      </div>
+    </article>
+  </div>
 </section>
 
 <!-- ===================== WORK ===================== -->
@@ -697,6 +958,69 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
   </article>
 </section>
 
+<!-- ===================== SKILLS ===================== -->
+<section class="sec wrap" id="skills">
+  <div class="head rv"><h2>Stack</h2></div>
+  <ul class="chips rv">
+    <li>Diseño web</li><li>Landing pages</li><li>Tiendas online</li><li>Rediseño</li><li>Diseño responsivo</li><li>WordPress</li><li>Elementor</li><li>HTML y CSS</li><li>Design systems</li><li>SEO on-page</li><li>Google Analytics 4</li><li>Search Console</li><li>Automatizaciones</li><li>Arquitectura de información</li><li>Mantenimiento</li><li class="more">+ Más</li>
+  </ul>
+</section>
+
+<!-- ===================== TOOL MARQUEE ===================== -->
+<section class="tools" aria-label="Tools I work with">
+  <div class="mq" id="mq"></div>
+</section>
+
+<!-- ===================== EXPERIENCE ===================== -->
+<section class="sec wrap" id="experience">
+  <div class="head rv"><h2>Proceso</h2></div>
+  <p class="sec-desc rv">Un proceso que entrega resultados, no solo archivos.</p>
+  <p class="sec-lead rv">Cada proyecto pasa por etapas claras para definir el problema, diseñar la experiencia, construir la solución y dejarla lista para crecer.</p>
+  <ul class="proc-points rv">
+    <li><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="var(--accent)"/><path d="m6 10.4 2.6 2.6L14.2 7.4" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Diseño centrado en el usuario</li>
+    <li><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="var(--accent)"/><path d="m6 10.4 2.6 2.6L14.2 7.4" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Rápido de iterar</li>
+    <li><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="var(--accent)"/><path d="m6 10.4 2.6 2.6L14.2 7.4" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Automatizaciones que ahorran tiempo</li>
+  </ul>
+
+  <div class="path-wrap rv">
+    <svg class="path-svg" viewBox="0 0 1016 576" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <mask id="trail-mask" maskUnits="userSpaceOnUse" x="-120" y="-120" width="1256" height="816">
+          <path class="trail" d="M 84 72 C 149 1 284 11 344 168 C 409 97 545 107 605 264 C 670 193 805 203 865 360" pathLength="1"/>
+        </mask>
+      </defs>
+      <path class="track" d="M 84 72 C 149 1 284 11 344 168 C 409 97 545 107 605 264 C 670 193 805 203 865 360"/>
+      <path class="track-lit" d="M 84 72 C 149 1 284 11 344 168 C 409 97 545 107 605 264 C 670 193 805 203 865 360" mask="url(#trail-mask)"/>
+      <circle class="node-ring" cx="84" cy="72" r="9"/>
+      <circle class="node" cx="84" cy="72" r="5"/>
+      <circle class="node-ring" cx="344" cy="168" r="9"/>
+      <circle class="node" cx="344" cy="168" r="5"/>
+      <circle class="node-ring" cx="605" cy="264" r="9"/>
+      <circle class="node" cx="605" cy="264" r="5"/>
+      <circle class="node-ring" cx="865" cy="360" r="9"/>
+      <circle class="node" cx="865" cy="360" r="5"/>
+    </svg>
+    <ol class="steps">
+      <li class="step rv">
+        <h3><i>01)</i>Descubrir</h3>
+        <p>Entiendo tu negocio, tus usuarios y el problema que quieres resolver. Reviso objetivos, procesos actuales, oportunidades y restricciones técnicas.</p>
+      </li>
+      <li class="step rv">
+        <h3><i>02)</i>Definir</h3>
+        <p>Organizo la solución antes de construirla. Defino funcionalidades, flujos, arquitectura de información y prioridades para que el proyecto tenga una dirección clara.</p>
+      </li>
+      <li class="step rv">
+        <h3><i>03)</i>Diseñar</h3>
+        <p>Creo una experiencia clara y consistente para web, mobile o tienda online. Diseño las pantallas, componentes y estados necesarios para validar cómo funcionará.</p>
+      </li>
+      <li class="step rv">
+        <h3><i>04)</i>Construir y mejorar</h3>
+        <p>Desarrollo la solución y la convierto en un producto funcional. Después conecto herramientas, automatizo tareas repetitivas y priorizo mejoras.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
 <!-- ===================== BIO ===================== -->
 <section class="bio">
   <div class="rings" aria-hidden="true">
@@ -720,138 +1044,66 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
   </div>
 </section>
 
-<!-- ===================== CLIENTS ===================== -->
-<section class="clients">
-  <div class="wrap clients-grid rv">
-    <div class="client">
-      <div class="client-logo">
-        <svg viewBox="0 0 200 34" fill="currentColor" aria-hidden="true">
-          <path d="M4 24 12 4l8 20-8-6-8 6Z"/><path d="M20 24 28 8l6 16-6-4-8 4Z" opacity=".6"/>
-          <text x="42" y="26" font-family="Satoshi,sans-serif" font-size="24" font-weight="700">Guardianes</text>
-        </svg>
-      </div>
-      <q>Plataforma de conservación, cuatro páginas de cero a producción</q>
-    </div>
-    <div class="client">
-      <div class="client-logo">
-        <svg viewBox="0 0 180 34" fill="currentColor" aria-hidden="true">
-          <path d="M17 2a15 15 0 1 0 15 15h-6a9 9 0 1 1-9-9V2Z"/>
-          <text x="40" y="26" font-family="Satoshi,sans-serif" font-size="24" font-weight="700">Growthia</text>
-        </svg>
-      </div>
-      <q>Sitio de agencia con landing y páginas de servicio</q>
-    </div>
-    <div class="client">
-      <div class="client-logo">
-        <svg viewBox="0 0 120 34" fill="currentColor" aria-hidden="true">
-          <path d="M17 2a15 15 0 0 1 0 30 15 15 0 0 1 0-30Zm0 6a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/>
-          <circle cx="17" cy="17" r="4"/>
-          <text x="40" y="26" font-family="Satoshi,sans-serif" font-size="24" font-weight="700">Ubi</text>
-        </svg>
-      </div>
-      <q>Red de domicilios explicada en una sola página</q>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== WHAT I DO ===================== -->
-<section class="sec wrap" id="services">
-  <div class="head rv"><h2>Servicios</h2></div>
-  <p class="sec-desc rv">Diseño y construyo páginas web y tiendas online a la medida: nueva presencia, rediseño o tu primera venta.</p>
-
-  <div class="services">
-    <div class="row rv"><h3>Diseño web</h3><div class="tags"><span>Landing</span><span>Sitio corporativo</span><span>Rediseño</span><span>Responsivo</span></div></div>
-    <div class="row rv"><h3>Desarrollo</h3><div class="tags"><span>WordPress</span><span>HTML y CSS</span><span>Integraciones</span><span>Rendimiento</span></div></div>
-    <div class="row rv"><h3>E-commerce</h3><div class="tags"><span>Catálogo</span><span>Checkout</span><span>Confianza</span><span>Móvil</span></div></div>
-    <div class="row rv"><h3>Automatización</h3><div class="tags"><span>Formularios</span><span>Conexiones</span><span>Reportes</span><span>Medición</span></div></div>
-  </div>
-</section>
-
-<!-- ===================== SKILLS ===================== -->
-<section class="sec wrap" id="skills">
-  <div class="head rv"><h2>Stack</h2></div>
-  <ul class="chips rv">
-    <li>Diseño web</li><li>Landing pages</li><li>Tiendas online</li><li>Rediseño</li><li>Diseño responsivo</li><li>WordPress</li><li>Elementor</li><li>HTML y CSS</li><li>Design systems</li><li>SEO on-page</li><li>Google Analytics 4</li><li>Search Console</li><li>Automatizaciones</li><li>Arquitectura de información</li><li>Mantenimiento</li><li class="more">+ Más</li>
-  </ul>
-</section>
-
-<!-- ===================== EXPERIENCE ===================== -->
-<section class="sec wrap" id="experience">
-  <div class="head rv"><h2>Proceso</h2></div>
-  <div class="exp">
-    <div class="row rv"><h3>Descubrir</h3><div class="meta"><span>Etapa 01</span><time>Objetivos, usuarios, procesos y restricciones</time></div></div>
-    <div class="row rv"><h3>Definir</h3><div class="meta"><span>Etapa 02</span><time>Funcionalidades, flujos, arquitectura y prioridades</time></div></div>
-    <div class="row rv"><h3>Diseñar</h3><div class="meta"><span>Etapa 03</span><time>Pantallas, componentes y estados</time></div></div>
-    <div class="row rv"><h3>Construir y mejorar</h3><div class="meta"><span>Etapa 04</span><time>Desarrollo, automatización y ajustes</time></div></div>
-  </div>
-</section>
-
-<!-- ===================== ARTICLES ===================== -->
-<section class="sec wrap" id="blog">
-  <div class="head rv"><h2>Notas</h2></div>
-  <div class="posts">
-    <a href="https://libermangonzalez.site/servicios/" class="row rv">
-      <div class="post-l">
-        <div class="thumb th-1"></div>
-        <div class="post-meta"><span>01</span><h3>Tu tienda no debería obligar a pensar demasiado antes de comprar</h3></div>
-      </div>
-    </a>
-    <a href="https://libermangonzalez.site/servicios/" class="row rv">
-      <div class="post-l">
-        <div class="thumb th-2"></div>
-        <div class="post-meta"><span>02</span><h3>Un proceso que entrega resultados, no solo archivos</h3></div>
-      </div>
-    </a>
-    <a href="https://libermangonzalez.site/servicios/" class="row rv">
-      <div class="post-l">
-        <div class="thumb th-3"></div>
-        <div class="post-meta"><span>03</span><h3>En el checkout, cada duda se puede convertir en un abandono</h3></div>
-      </div>
-    </a>
-    <div class="more-wrap rv"><a href="https://libermangonzalez.site/servicios/" class="btn-more">Ver más</a></div>
-  </div>
-</section>
-
 <!-- ===================== FAQ ===================== -->
 <section class="sec wrap" id="faq">
   <div class="head rv"><h2>Preguntas frecuentes</h2></div>
   <div class="faq-list">
     <div class="faq-item rv">
-      <button class="faq-q" aria-expanded="false">¿Qué tipo de proyectos web tomas?
+      <button class="faq-q" aria-expanded="false">¿Cuánto cuesta un proyecto?
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="faq-a"><div><p>Depende del alcance: no es lo mismo una landing de una página que una tienda con catálogo y checkout. Después de la primera conversación recibes una cifra cerrada y un alcance por escrito, para que no aparezcan sorpresas a mitad del camino.</p></div></div>
+    </div>
+    <div class="faq-item rv">
+      <button class="faq-q" aria-expanded="false">¿Cuánto se demora?
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="faq-a"><div><p>Depende del alcance y de qué tan rápido lleguen los contenidos: textos, fotos y accesos suelen ser lo que más retrasa un proyecto. En la propuesta va una fecha de entrega concreta, no un estimado vago.</p></div></div>
+    </div>
+    <div class="faq-item rv">
+      <button class="faq-q" aria-expanded="false">¿El sitio queda a mi nombre?
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="faq-a"><div><p>Sí. El dominio, el hosting y el sitio quedan en cuentas tuyas y con tus accesos. No trabajo con sitios alquilados ni te dejo dependiendo de mí para entrar a tu propio proyecto.</p></div></div>
+    </div>
+    <div class="faq-item rv">
+      <button class="faq-q" aria-expanded="false">¿Y si no me gusta el diseño?
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="faq-a"><div><p>El diseño se revisa por etapas, no al final. Ves la estructura antes que las pantallas, y las pantallas antes del desarrollo, así que los cambios se hacen cuando todavía son baratos.</p></div></div>
+    </div>
+    <div class="faq-item rv">
+      <button class="faq-q" aria-expanded="false">¿Puedo administrarlo yo después?
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="faq-a"><div><p>Sí. El sitio se entrega con el contenido editable desde el administrador, y con una guía para cambiar textos, fotos y precios sin tocar código.</p></div></div>
+    </div>
+    <div class="faq-item rv">
+      <button class="faq-q" aria-expanded="false">¿Qué tipo de proyectos tomas?
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="faq-a"><div><p>Landings para validar una idea, sitios corporativos de varias páginas, rediseños de un sitio que ya existe y tiendas online. Cuando el proyecto necesita una aplicación web o mobile, lo trabajo con un equipo especializado.</p></div></div>
     </div>
-    <div class="faq-item rv">
-      <button class="faq-q" aria-expanded="false">¿Cómo es el proceso?
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="faq-a"><div><p>Cuatro etapas. Descubrir: objetivos del negocio, usuarios y restricciones. Definir: funcionalidades, flujos y prioridades antes de construir. Diseñar: pantallas, componentes y estados. Construir y mejorar: desarrollo, automatizaciones y ajustes con la medición ya puesta.</p></div></div>
-    </div>
-    <div class="faq-item rv">
-      <button class="faq-q" aria-expanded="false">¿Trabajas en remoto?
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="faq-a"><div><p>Sí. Base en Medellín, Colombia, modalidad remota, disponible por proyecto o por contrato. Si tienes una idea, un sitio que se quedó corto o una tienda que no está vendiendo, escríbeme y lo revisamos.</p></div></div>
-    </div>
   </div>
 </section>
-</main>
 
 <!-- ===================== FOOTER ===================== -->
 <footer class="foot wrap" id="contact">
   <div class="cta rv">
-    <h2>Servicios adaptados a lo que tu negocio necesita</h2>
+    <h2>Tu próximo sitio puede estar en línea este mes</h2>
+    <p class="cta-sub">Cuéntame qué necesita lograr tu negocio y te digo qué haría, en cuánto tiempo y por cuánto. Sin compromiso.</p>
     <a href="https://libermangonzalez.site/contacto/" class="btn-hire">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5 14.4 9l7.6 3-7.6 3-2.4 7.5L9.6 15 2 12l7.6-3L12 1.5Z" fill="#ff6c0a"/></svg>
       Trabajemos juntos
     </a>
+    <p class="cta-note">Respondo en menos de 24 horas hábiles.</p>
     <div class="cta-by"><i></i> Liberman González — Diseño y desarrollo web</div>
   </div>
 
   <div class="foot-bar">
     <span>© Liberman González 2025</span>
     <nav>
+      <a href="https://libermangonzalez.site/servicios/">Notas</a>
       <a href="https://www.linkedin.com/in/libermangonzalez/" target="_blank" rel="noopener">LinkedIn</a>
       <a href="https://www.instagram.com/liberman_ux/" target="_blank" rel="noopener">Instagram</a>
       <a href="https://x.com/liberman_ux" target="_blank" rel="noopener">X</a>
@@ -859,29 +1111,79 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
     </nav>
   </div>
 </footer>
+
 <script>
 /* ---------- tool marquee (built once, then duplicated) ---------- */
 (function(){
   var tools=[
-    ['Figma','Diseño de interfaz y sistema de componentes','<circle cx="9" cy="5.5" r="3.5" fill="currentColor"/><circle cx="15" cy="12" r="3.5" fill="currentColor" opacity=".7"/><circle cx="9" cy="12" r="3.5" fill="currentColor" opacity=".85"/><circle cx="9" cy="18.5" r="3.5" fill="currentColor" opacity=".6"/>'],
-    ['FigJam','Mapas de flujo y arquitectura del sitio','<rect x="3" y="3" width="8" height="8" rx="2" fill="currentColor"/><rect x="13" y="3" width="8" height="8" rx="2" fill="currentColor" opacity=".55"/><rect x="3" y="13" width="18" height="8" rx="2" fill="currentColor" opacity=".8"/>'],
-    ['WordPress','El CMS donde vive el sitio y lo administras tú','<circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M4 10h5l3 9 2-6-2-3h4l3 9 2-9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>'],
-    ['Elementor','Maquetación editable sin romper el diseño','<rect x="4" y="3" width="4" height="18" rx="1" fill="currentColor"/><rect x="11" y="3" width="9" height="5" rx="1" fill="currentColor" opacity=".75"/><rect x="11" y="10" width="9" height="5" rx="1" fill="currentColor" opacity=".6"/><rect x="11" y="17" width="9" height="4" rx="1" fill="currentColor" opacity=".45"/>'],
-    ['HTML y CSS','Lo suficiente para no adivinar en el detalle','<path d="M3 6h4l2.5 7L12 6h3l2.5 7L20 6h1l-4 12h-3l-2.5-6.5L9 18H6L3 6Z" fill="currentColor"/>'],
-    ['Git','Control de versiones del proyecto','<path d="M3 14 10 21M3 9l12 12M4 4l16 16M9 3l12 12M15 3l6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'],
-    ['VS Code','Donde se escribe y se ajusta el código','<rect x="4" y="3" width="16" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M9 8v8l6-8v8" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/>'],
-    ['Claude Code','Agentes de código para iterar más rápido','<path d="M4 12 12 3l8 9-8 9-8-9Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v10" stroke="currentColor" stroke-width="1.8"/>'],
-    ['Cursor','Editor con IA para pasar de diseño a código','<path d="M6 3l12 8-5 1.4L16 19l-2.6 1.2-3-6.4L6 17V3Z" fill="currentColor"/>'],
-    ['Analytics 4','Medición de comportamiento y conversión','<path d="M6 20V8m6 12V4m6 16v-7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>'],
-    ['Search Console','Rendimiento en búsqueda y SEO on-page','<circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>'],
-    ['PostHog','Analítica de producto y embudos','<path d="M12 21s-8-4.7-8-10a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.3-8 10-8 10Z" fill="currentColor"/>']
+    ['figma','Figma','Diseño de interfaz y sistema de componentes'],
+    ['framer','Framer','Prototipos y sitios con movimiento'],
+    ['dribbble','Dribbble','Referencia visual y exploración de estilo'],
+    ['wordpress','WordPress','El CMS donde vive el sitio y lo administras tú'],
+    ['shopify','Shopify','Tiendas online listas para vender'],
+    ['squarespace','Squarespace','Sitios rápidos cuando el proyecto lo pide'],
+    ['github','GitHub','Control de versiones y respaldo del proyecto'],
+    ['docker','Docker','Entornos de prueba idénticos al servidor'],
+    ['n8n','n8n','Automatizaciones que conectan tus herramientas'],
+    ['claude','Claude','Agentes de código para iterar más rápido'],
+    ['openai','OpenAI','Modelos de IA aplicados a contenido y soporte'],
+    ['notion','Notion','Documentación y seguimiento del proyecto'],
+    ['ahrefs','Ahrefs','Investigación de palabras clave y SEO'],
+    ['godaddy','GoDaddy','Dominios y DNS']
   ];
   var html='';
   tools.forEach(function(t){
-    html+='<div class="tile"><span class="tip"><b>'+t[0]+'</b>'+t[1]+'</span>'+
-          '<svg viewBox="0 0 24 24" fill="none" style="color:#f2f2f2">'+t[2]+'</svg></div>';
+    html+='<div class="tile"><span class="tip">'+t[2]+'</span>'+
+          '<img src="assets/logo-'+t[0]+'.png" alt="'+t[1]+'" height="28" decoding="async"></div>';
   });
   document.getElementById('mq').innerHTML=html+html;
+})();
+
+/* ---------- clients marquee (se repite hasta cubrir el viewport) ---------- */
+(function(){
+  var el=document.getElementById('cmq'); if(!el) return;
+  var base=el.innerHTML, guard=0;
+  while(el.scrollWidth < window.innerWidth && guard++ < 12) el.innerHTML += base;
+  el.innerHTML += el.innerHTML;
+})();
+
+/* ---------- sección Problema: titular por palabras, entrada y contadores ---------- */
+(function(){
+  var sec=document.getElementById('problema'); if(!sec) return;
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  var h=sec.querySelector('.prob-title');
+  if(h && !reduce){
+    h.innerHTML=h.textContent.trim().split(/\s+/).map(function(w,i){
+      return '<span class="w"><i style="animation-delay:'+(i*50)+'ms">'+w+'</i></span>';
+    }).join(' ');
+  }
+
+  function fmt(v,dec){return v.toLocaleString('es-ES',{minimumFractionDigits:dec,maximumFractionDigits:dec})}
+  function countUp(el){
+    var to=parseFloat(el.dataset.count), suf=el.dataset.suffix||'', dec=(to%1?1:0), t0=null;
+    if(reduce){el.textContent=fmt(to,dec)+suf;return}
+    requestAnimationFrame(function step(t){
+      if(!t0)t0=t;
+      var pr=Math.min(1,(t-t0)/2000), e=1-Math.pow(1-pr,3);
+      el.textContent=fmt(to*e,dec)+suf;
+      if(pr<1) requestAnimationFrame(step);
+    });
+  }
+
+  if(!('IntersectionObserver' in window)){
+    sec.classList.add('on');
+    sec.querySelectorAll('[data-count]').forEach(countUp);
+    return;
+  }
+  new IntersectionObserver(function(en,o){
+    en.forEach(function(e){
+      if(!e.isIntersecting) return;
+      o.unobserve(e.target);
+      sec.classList.add('on');
+      sec.querySelectorAll('[data-count]').forEach(countUp);
+    });
+  },{threshold:.2}).observe(sec);
 })();
 
 /* ---------- scroll reveal ---------- */
