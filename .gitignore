@@ -12,3 +12,11 @@ package-lock.json
 # verification output
 /verify/out/
 *.log
+
+# fuentes de mockup en resolucion completa (148 MB) — solo se versionan los .webp exportados
+mockups-landing/
+
+# exportaciones sueltas sin usar en la pagina
+assets/*.png
+!assets/logo-*.png
+!assets/logos-clientes/*.png
