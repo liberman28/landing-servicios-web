@@ -76,7 +76,8 @@ ul{margin:0;padding:0;list-style:none}
 .rv.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){
   .rv{opacity:1!important;transform:none!important;transition:none}
-  .fcard,.fcard-visual img,.fcard-rule{transition:none}
+  .fcard,.viz-box,.viz-box img,.fcard-rule,.prob-card{transition:none}
+  .viz-dot{animation:none}
   .trail{animation:none;stroke-dashoffset:0}
   .ring .spin{animation:none}
   .prob-card{opacity:1!important;transform:none!important}
@@ -86,7 +87,7 @@ ul{margin:0;padding:0;list-style:none}
 /* ============================================================
    NAV
    ============================================================ */
-.nav{position:fixed;inset:0 0 auto;z-index:100;height:101px;display:flex;align-items:center}
+.nav{position:fixed;inset:0 0 auto;z-index:100;height:101px;display:flex;align-items:flex-start;padding-top:34px}
 .nav::before{
   content:"";position:absolute;inset:0;z-index:-1;
   backdrop-filter:blur(0px);
@@ -95,33 +96,41 @@ ul{margin:0;padding:0;list-style:none}
   transition:backdrop-filter .3s ease;
 }
 .nav.stuck::before{backdrop-filter:blur(10px)}
-.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:24px}
-.logo{display:block;width:44px;height:47px;color:#f0f0f0;opacity:.95;transition:opacity .25s}
-.logo:hover{opacity:.7}
-.nav-links{display:flex;align-items:center;gap:32px}
-.nav-links a{
-  font-size:15px;font-weight:500;letter-spacing:-.3px;line-height:15px;
-  color:var(--t-1);opacity:.9;transition:opacity .25s var(--ease);
+.nav-inner{display:flex;align-items:center;justify-content:center}
+
+/* Dock de navegacion — Figma "navmenu" (125:349): pildora 264x76, radio 60,
+   padding 12, gap 12; boton 50x50 con base #121212 + velo blanco al 6% y
+   borde #222; inactivo al 40%; en hover aparece un punto de 4px (#7d7d7d). */
+.dock{
+  display:flex;align-items:center;gap:8px;padding:6px 8px;
+  border-radius:60px;background:rgba(0,0,0,.42);
+  -webkit-backdrop-filter:blur(30px);backdrop-filter:blur(30px);
+  box-shadow:
+    0 .711334px 1.2804px -.95px rgba(0,0,0,.09),
+    0 1.93715px 3.48687px -1.9px rgba(0,0,0,.09),
+    0 4.25328px 7.65591px -2.85px rgba(0,0,0,.08),
+    0 9.44132px 16.9944px -3.8px rgba(0,0,0,.06),
+    0 24px 43.2px -4.75px rgba(0,0,0,.01);
 }
-.nav-links a:hover{opacity:.55}
-.nav-pill{
-  margin-left:-10px;
-  display:inline-flex;align-items:center;height:32px;padding:0 18px;
-  border-radius:37px;background:var(--panel);
-  font-family:var(--alt);font-size:16px;font-weight:400;letter-spacing:-.16px;
-  color:#fff!important;opacity:1!important;
-  box-shadow:inset 0 -1px 0 rgba(47,43,67,.1),0 1px 3px rgba(47,43,67,.1),0 0 0 1px rgba(255,255,255,.06);
-  transition:background .25s var(--ease),transform .25s var(--ease);
+.dock a{
+  position:relative;display:grid;place-items:center;width:50px;height:50px;
+  border-radius:50%;
+  transition:background .3s var(--ease),box-shadow .3s var(--ease);
 }
-.nav-pill:hover{background:#1e1e1e;transform:translateY(-1px)}
-.nav-toggle{display:none;width:40px;height:40px;align-items:center;justify-content:center;border-radius:12px}
-.nav-toggle span{display:block;width:18px;height:1.5px;background:var(--t-1);position:relative;transition:.3s var(--ease)}
-.nav-toggle span::before,.nav-toggle span::after{content:"";position:absolute;left:0;width:18px;height:1.5px;background:var(--t-1);transition:.3s var(--ease)}
-.nav-toggle span::before{top:-6px}
-.nav-toggle span::after{top:6px}
-body.menu .nav-toggle span{background:transparent}
-body.menu .nav-toggle span::before{top:0;transform:rotate(45deg)}
-body.menu .nav-toggle span::after{top:0;transform:rotate(-45deg)}
+/* solo el item activo (o el que tiene el cursor encima) lleva el disco de cristal */
+.dock a.active,.dock a:hover{
+  background:rgba(255,255,255,.06);
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1);
+}
+.dock a img{display:block}
+.dock a::after{
+  content:"";position:absolute;left:50%;top:calc(100% + 4px);transform:translateX(-50%);
+  width:4px;height:4px;border-radius:99px;background:#7d7d7d;
+  opacity:0;transition:opacity .25s var(--ease);
+}
+.dock a:hover::after{opacity:1}
+.dock a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 
 /* ============================================================
    HERO
@@ -256,14 +265,8 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
    de 2s y anillo en rotación lineal de 3s. Paleta y tipografía nuestras.
    ============================================================ */
 #problema{text-align:center}
-.prob-pill{
-  display:inline-flex;align-items:center;gap:10px;height:34px;padding:0 16px;
-  border-radius:99px;background:var(--panel);border:1px solid var(--line);
-  font-family:var(--ui);font-size:13px;font-weight:500;letter-spacing:.02em;color:var(--t-2);
-}
-.prob-pill::before,.prob-pill::after{content:"";width:14px;height:1px;background:var(--accent)}
 .prob-title{
-  margin:26px auto 0;max-width:760px;
+  margin:0 auto;max-width:760px;
   font-size:46px;font-weight:400;line-height:55px;letter-spacing:-1.38px;color:var(--t-1);
   text-wrap:balance;
 }
@@ -274,60 +277,52 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
 @keyframes wordUp{from{transform:translateY(105%);opacity:0}to{transform:translateY(0);opacity:1}}
 .prob-sub{margin:22px auto 0;max-width:600px;font-size:18px;line-height:25.2px;color:var(--t-4)}
 
-.prob-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px;text-align:left}
+.prob-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:60px;text-align:left}
+/* Tarjeta — componente propio en Figma (157:966) */
+/* mismo acabado que las tarjetas de proyecto: radio 32, --panel,
+   sin borde y un pozo de color desenfocado propio de cada tarjeta */
 .prob-card{
-  background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 18px 26px;
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;gap:48px;padding:28px;
+  border-radius:32px;background:var(--panel);
   opacity:0;transform:translateY(50px);
-  transition:opacity .55s var(--ease-spring),transform .55s var(--ease-spring),border-color .4s var(--ease);
+  transition:opacity .55s var(--ease-spring),transform .55s var(--ease-spring);
 }
+.prob-card::before{
+  content:"";position:absolute;width:420px;height:420px;border-radius:50%;
+  left:44%;top:-120px;filter:blur(115px);opacity:.13;z-index:0;pointer-events:none;
+}
+.prob-card:nth-child(1)::before{background:#82c95e}
+.prob-card:nth-child(2)::before{background:#d48740}
+.prob-card:nth-child(3)::before{background:#ba8ad6}
+.prob-card:nth-child(4)::before{background:#0f6499}
+.prob-card>*{position:relative;z-index:1}
 #problema.on .prob-card{opacity:1;transform:none}
-#problema.on .prob-card:nth-child(2){transition-delay:.12s}
-#problema.on .prob-card:nth-child(3){transition-delay:.24s}
-.prob-card:hover{border-color:rgba(255,255,255,.18)}
-.prob-card h3{margin:22px 0 0;font-size:24px;font-weight:500;line-height:29px;letter-spacing:-.5px;color:var(--t-1)}
-.prob-card p{margin:10px 0 0;font-size:15px;line-height:21px;color:var(--t-4)}
+#problema.on .prob-card:nth-child(2){transition-delay:.1s}
+#problema.on .prob-card:nth-child(3){transition-delay:.2s}
+#problema.on .prob-card:nth-child(4){transition-delay:.3s}
 
-/* --- lienzo del widget --- */
-.viz{
-  position:relative;height:210px;border-radius:10px;overflow:hidden;padding:16px;
-  background:radial-gradient(120% 100% at 50% 0,rgba(255,108,10,.10),transparent 62%),var(--panel-deep);
-  border:1px solid var(--line-soft);
+.pc-top{display:flex;flex-direction:column;align-items:flex-start;gap:16px}
+.pc-tile{
+  display:grid;place-items:center;width:90px;height:90px;flex:none;overflow:hidden;
+  border-radius:24px;background:rgba(66,111,194,.16);
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1);
 }
-.viz-lbl{font-family:var(--ui);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--t-4)}
-.viz-num{margin-top:2px;font-size:34px;font-weight:500;line-height:1;letter-spacing:-1px;color:var(--t-1);font-variant-numeric:tabular-nums}
-.viz-foot{position:absolute;left:16px;right:16px;bottom:14px;display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
-.viz-tag{
-  display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:7px;
-  background:rgba(255,108,10,.14);border:1px solid rgba(255,108,10,.30);
-  font-family:var(--ui);font-size:11px;font-weight:500;color:#ffb37a;white-space:nowrap;
+.pc-tile svg{width:33.34px;height:33.34px;fill:#fff}
+.prob-card h3{
+  margin:0;font-size:24px;font-weight:400;line-height:33.6px;letter-spacing:-.5px;color:var(--t-2);
 }
-/* barras */
-.bars{position:absolute;left:16px;right:16px;bottom:44px;height:86px;display:flex;align-items:flex-end;gap:7px}
-.bars span{flex:1;border-radius:3px 3px 0 0;background:linear-gradient(180deg,rgba(255,108,10,.55),rgba(255,108,10,.06))}
-.bars b{position:absolute;left:0;right:0;bottom:6px;height:1px;background:var(--accent);opacity:.9}
-/* anillo */
-.ring{position:absolute;inset:0;display:grid;place-items:center}
-.ring svg{width:150px;height:150px;transform:rotate(-90deg)}
-.ring .trackc{fill:none;stroke:rgba(255,255,255,.10);stroke-width:9}
-.ring .arc{fill:none;stroke:var(--accent);stroke-width:9;stroke-linecap:round;
-  stroke-dasharray:408;stroke-dashoffset:408;transition:stroke-dashoffset 2s var(--ease)}
-#problema.on .ring .arc{stroke-dashoffset:139}
-.ring .spin{fill:none;stroke:rgba(255,108,10,.35);stroke-width:1;stroke-dasharray:5 9;
-  transform-origin:50% 50%;animation:spin 3s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.ring-mid{position:absolute;text-align:center}
-/* semana */
-.week{position:absolute;left:16px;right:16px;top:74px;display:flex;justify-content:space-between;gap:6px}
-.week i{flex:1;height:26px;border-radius:6px;background:rgba(255,255,255,.07);display:block}
-.week i.hit{background:rgba(255,108,10,.55)}
-.wk-days{position:absolute;left:16px;right:16px;top:56px;display:flex;justify-content:space-between;
-  font-family:var(--ui);font-size:9px;letter-spacing:.05em;color:var(--t-4)}
-.wk-days span{flex:1;text-align:center}
-.bar-out{position:absolute;left:16px;right:16px;bottom:44px;height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
-.bar-in{height:100%;width:0;border-radius:99px;background:var(--accent);transition:width 2s var(--ease)}
-#problema.on .bar-in{width:30%}
+.pc-bot{display:flex;flex-direction:column;gap:12px}
+.pc-tags{display:flex;flex-wrap:wrap;gap:8px}
+.pc-tags span{
+  display:inline-flex;align-items:center;justify-content:center;height:34px;padding:8px 12px;
+  border-radius:99px;background:rgba(255,255,255,.06);border:1px solid var(--line);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  font-family:var(--ui);font-size:14px;letter-spacing:-.2px;color:var(--t-3);white-space:nowrap;
+}
+.prob-card p{margin:0;font-size:18px;line-height:25.2px;color:var(--t-3)}
 
-.hero-proof{margin-top:28px;font-size:14px;line-height:16.8px;letter-spacing:-.2px;color:var(--t-4)}
 
 /* ============================================================
    PROCESS PATH
@@ -336,7 +331,7 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
    recorre la curva (pathLength=1, dash .3/.7, dashoffset 0 -> -1,
    6.44s lineal infinito). Aquí el segmento va en color de acento.
    ============================================================ */
-.proc-points{display:flex;flex-wrap:wrap;gap:12px 30px;margin:28px 0 0;padding:0;list-style:none}
+.proc-points{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 30px;margin:28px 0 0;padding:0;list-style:none}
 .proc-points li{display:flex;align-items:center;gap:9px;font-size:16px;line-height:19.2px;color:var(--t-2)}
 .proc-points svg{width:17px;height:17px;flex:none}
 
@@ -370,21 +365,50 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
   margin-top:56px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
 }
 .fcard{
-  position:relative;background:var(--panel);border:1px solid var(--line);
-  border-radius:12px;padding:24px 0;overflow:clip;
-  transition:transform .4s var(--ease-spring),border-color .4s var(--ease-spring);
+  position:relative;background:var(--panel);
+  border-radius:32px;padding:0 0 24px;overflow:hidden;
+  transition:transform .4s var(--ease-spring);
 }
-.fcard:hover{transform:translateY(-6px);border-color:rgba(255,255,255,.18)}
-.fcard-eyebrow{
-  padding:0 24px;font-size:16px;font-weight:500;line-height:19.2px;color:var(--t-4);
+/* el pozo de color va abajo, donde no lo tapa la imagen */
+.fcard::before{
+  content:"";position:absolute;width:380px;height:380px;border-radius:50%;
+  left:40%;bottom:-190px;filter:blur(115px);opacity:.13;z-index:0;pointer-events:none;
 }
-.fcard-visual{position:relative;margin-top:10px;height:288px;overflow:hidden}
-.fcard-visual img{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  transform:scale(1.09);filter:saturate(.8) brightness(.78);
-  transition:transform 1.2s var(--ease),filter .6s var(--ease);
+.fcards .fcard:nth-child(1)::before{background:#82c95e}
+.fcards .fcard:nth-child(2)::before{background:#d48740}
+.fcards .fcard:nth-child(3)::before{background:#ba8ad6}
+.fcard>*{position:relative;z-index:1}
+.fcard:hover{transform:translateY(-6px)}
+.fcard-visual{position:relative;height:288px;overflow:hidden}
+/* imagen y punto viven en la misma caja, asi el punto no se desalinea
+   cuando cambia el recorte al variar el ancho de la tarjeta */
+.viz-box{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%) scale(1.09);
+  aspect-ratio:742/508;height:100%;width:auto;
+  transition:transform 1.2s var(--ease);
 }
-.fcard:hover .fcard-visual img{transform:scale(1.15);filter:none}
+.viz-box img{
+  display:block;width:100%;height:100%;
+  filter:saturate(.8) brightness(.78);transition:filter .6s var(--ease);
+}
+.fcard:hover .viz-box{transform:translate(-50%,-50%) scale(1.15)}
+.fcard:hover .viz-box img{filter:none}
+/* el punto del grafico: latido suave siempre, y realce al pasar el cursor */
+.viz-dot{
+  position:absolute;left:62.29%;top:48.09%;width:7.28%;aspect-ratio:1;
+  transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;
+  animation:dotPulse 3s ease-in-out infinite;
+  transition:transform .5s var(--ease-spring);
+}
+@keyframes dotPulse{
+  0%,100%{box-shadow:0 0 10px 2px rgba(255,255,255,.26),0 0 26px 8px rgba(255,108,10,.16)}
+  50%    {box-shadow:0 0 17px 5px rgba(255,255,255,.46),0 0 42px 15px rgba(255,108,10,.32)}
+}
+.fcard:hover .viz-dot{
+  transform:translate(-50%,-50%) scale(1.22);
+  animation-duration:1.4s;
+}
 /* la imagen se funde con la tarjeta por abajo, como la luz del resto del sitio */
 .fcard-visual::after{
   content:"";position:absolute;inset:0;pointer-events:none;
@@ -392,19 +416,20 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
 }
 .fcard-body{padding:26px 24px 0;text-align:center}
 .fcard-body h3{
-  font-size:20px;font-weight:500;line-height:24px;letter-spacing:-.2px;color:var(--t-1);
+  font-size:24px;font-weight:400;line-height:33.6px;letter-spacing:-.5px;color:var(--t-2);
 }
 .fcard-rule{
   display:block;width:158px;height:2px;margin:10px auto 12px;background:var(--line);
   transition:background .4s var(--ease-spring),width .4s var(--ease-spring);
 }
 .fcard:hover .fcard-rule{width:64px;background:var(--accent)}
-.fcard-body p{font-size:16px;font-weight:500;line-height:19.2px;color:var(--t-4)}
+.fcard-body p{font-size:18px;line-height:25.2px;color:var(--t-3)}
 
 /* ============================================================
    WORK / CASE CARDS
    ============================================================ */
 .work{padding-top:64px}
+.work .sec-lead{margin-bottom:72px}
 .case{
   position:sticky;top:210px;
   min-height:500px;border-radius:32px;background:var(--panel);
@@ -472,44 +497,6 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
 /* ============================================================
    BIO — big statement with rotating chips
    ============================================================ */
-.bio{position:relative;padding:147px 0 0;overflow-x:clip}
-.rings{position:absolute;left:50%;top:725px;transform:translate(-50%,-50%);width:0;height:0;pointer-events:none;z-index:0}
-.rings i{
-  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  border:1px solid rgba(255,255,255,.05);border-radius:50%;
-}
-.bio-copy{
-  position:relative;z-index:1;max-width:600px;margin:0 auto;text-align:center;
-  font-size:24px;line-height:58px;letter-spacing:-.5px;color:#fff;
-}
-.chip{
-  display:inline-flex;align-items:center;height:40px;padding:0 18px;vertical-align:middle;
-  border:1px solid rgba(255,255,255,.22);border-radius:999px;
-  overflow:hidden;color:var(--t-3);
-}
-.chip u{display:block;height:24px;overflow:hidden;text-decoration:none}
-.chip u span{display:block;height:24px;line-height:24px;font-size:18px;letter-spacing:0;white-space:nowrap;animation:roll 10s cubic-bezier(.8,0,.2,1) infinite}
-/* barrido de luz sobre el chip y su texto */
-.chip,.chip u span{
-  -webkit-mask-image:linear-gradient(to right,rgba(0,0,0,.45) 30%,#eee 50%,rgba(0,0,0,.45) 70%);
-  mask-image:linear-gradient(to right,rgba(0,0,0,.45) 30%,#eee 50%,rgba(0,0,0,.45) 70%);
-  -webkit-mask-size:250% 100%;mask-size:250% 100%;
-  animation-name:roll,shine;
-  animation-duration:10s,5s;
-  animation-timing-function:cubic-bezier(.8,0,.2,1),ease-in-out;
-  animation-iteration-count:infinite,infinite;
-}
-.chip{animation-name:shine;animation-duration:5s;animation-timing-function:ease-in-out}
-@keyframes shine{0%{mask-position:200% center;-webkit-mask-position:200% center}
-                 100%{mask-position:-100% center;-webkit-mask-position:-100% center}}
-@keyframes roll{
-  0%,14%{transform:translateY(0)}
-  20%,34%{transform:translateY(-24px)}
-  40%,54%{transform:translateY(-48px)}
-  60%,74%{transform:translateY(-72px)}
-  80%,94%{transform:translateY(-96px)}
-  100%{transform:translateY(-120px)}
-}
 
 /* ============================================================
    CLIENTS
@@ -521,9 +508,14 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
 .cmq{display:flex;align-items:center;width:max-content;gap:96px;animation:cmq 34s linear infinite}
 .clients:hover .cmq{animation-play-state:paused}
 @keyframes cmq{to{transform:translateX(calc(-50% - 48px))}}
-.cbrand{flex:none;display:flex;align-items:center;color:#fff;opacity:.82;transition:opacity .35s var(--ease)}
+.cbrand{flex:none;display:flex;align-items:center;color:#fff;opacity:.9;transition:opacity .35s var(--ease)}
 .cbrand:hover{opacity:1}
-.cbrand svg{height:30px;width:auto}
+.cbrand img{display:block;width:auto;height:30px}
+/* altura por marca: Evora y Growthia son lockups apilados, necesitan mas alto
+   para que el nombre pese igual que el de CraftLab, que va en una sola linea */
+.b-craftlab img{height:26px}
+.b-evora img{height:34px}
+.b-growthia img{height:31px}
 
 /* ============================================================
    SHARED SECTION HEAD
@@ -533,14 +525,10 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
 #experience{padding-top:165px}
 #blog{padding-top:193px}
 #faq{padding-top:166px}
-.head{display:flex;align-items:baseline;gap:18px}
-.head::before{
-  content:"";width:8px;height:8px;flex:none;border-radius:50%;background:var(--accent);
-  transform:translateY(-14px);
-}
+.head{display:flex;align-items:baseline;justify-content:center;text-align:center}
 .head h2{font-size:38px;font-weight:400;line-height:45.6px;letter-spacing:-.7px;color:var(--t-1)}
-.sec-desc{margin-top:24px;max-width:640px;font-size:24px;line-height:33.6px;color:var(--t-2)}
-.sec-lead{margin-top:16px;max-width:640px;font-size:18px;line-height:25.2px;color:var(--t-4)}
+.sec-desc{margin:24px auto 0;max-width:640px;font-size:24px;line-height:33.6px;color:var(--t-2);text-align:center;text-wrap:balance}
+.sec-lead{margin:16px auto 0;max-width:640px;font-size:18px;line-height:25.2px;color:var(--t-4);text-align:center;text-wrap:balance}
 
 /* rows with a hairline underneath */
 .row{
@@ -559,7 +547,7 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
 .services .row:hover h3{color:var(--accent)}
 
 /* Skills */
-.chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;max-width:830px}
+.chips{display:flex;flex-wrap:wrap;gap:12px;margin:24px auto 0;max-width:830px;justify-content:center}
 .chips li{
   display:inline-flex;align-items:center;height:38px;padding:0 12px;border-radius:8px;
   background:var(--panel);font-size:16px;font-weight:500;line-height:22.4px;letter-spacing:-.3px;color:var(--t-1);
@@ -664,13 +652,15 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
 .hero-title{animation-delay:.28s}
 .hero-sub{animation-delay:.4s}
 .hero-cta{animation-delay:.52s}
-.nav{animation:up .8s var(--ease) both;animation-delay:.05s}
+/* sin animacion de entrada: los keyframes up animan transform y eso convierte
+   al nav en backdrop root, matando el backdrop-filter del dock */
 
 /* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width:1000px){
-  .prob-cards{grid-template-columns:1fr;max-width:420px;margin-left:auto;margin-right:auto}
+  .viz-box{width:100%;height:auto}
+  .prob-cards{grid-template-columns:1fr;max-width:460px;margin-left:auto;margin-right:auto}
   .prob-title{font-size:36px;line-height:43px;letter-spacing:-.9px}
   .path-wrap{height:640px}
   .fcards{grid-template-columns:repeat(2,1fr)}
@@ -678,7 +668,6 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
   .shot{width:100%;height:auto;aspect-ratio:428/243}
   .case-cta{margin-top:8px}
   .hero-title{font-size:38px;letter-spacing:-1px}
-  .bio-copy{font-size:20px;line-height:30px}
 }
 @media (max-width:860px){
   .path-wrap{height:auto;margin-top:44px;padding-left:30px}
@@ -689,16 +678,7 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
   .path-wrap .step{position:relative;left:auto;top:auto;width:auto}
   .step::before{content:"";position:absolute;left:-30px;top:7px;width:11px;height:11px;
     border-radius:50%;background:var(--t-2)}
-  .nav-links{
-    position:fixed;inset:101px 0 auto;flex-direction:column;align-items:stretch;gap:0;
-    padding:8px 24px 24px;background:rgba(8,8,8,.96);backdrop-filter:blur(14px);
-    border-bottom:1px solid var(--line);
-    transform:translateY(-12px);opacity:0;pointer-events:none;transition:.35s var(--ease);
-  }
-  body.menu .nav-links{transform:none;opacity:1;pointer-events:auto}
-  .nav-links a{padding:15px 0;font-size:17px;border-bottom:1px solid var(--line-soft)}
-  .nav-pill{margin:14px 0 0;align-self:flex-start;height:40px}
-  .nav-toggle{display:flex}
+  .dock{gap:9px;padding:10px}
   .clients-grid{grid-template-columns:1fr;gap:56px}
   .services .row,.exp .row{height:auto;padding:20px 0;flex-direction:column;align-items:flex-start;gap:10px}
   .exp .meta{text-align:left}
@@ -736,27 +716,19 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
 <!-- ===================== NAV ===================== -->
 <header class="nav" id="nav">
   <div class="wrap nav-inner">
-    <a href="#" class="logo" aria-label="Home">
-      <svg viewBox="0 0 36 38" fill="none" aria-hidden="true">
-        <path d="M17.4 1.6c1.6.6 2.1 2 1.4 4.2-1.5 4.7-4.6 9.9-9.3 15.6-3.6 4.4-6.6 7.2-8.2 6.4-1.4-.7-1.2-2.6.4-5.6C4.9 15.6 9.4 8.8 14 3.5c1.3-1.5 2.4-2.2 3.4-1.9Z" fill="currentColor"/>
-        <path d="M33.6 10c1.6.6 2.1 2 1.4 4.2-1.5 4.7-4.6 9.9-9.3 15.6-3.6 4.4-6.6 7.2-8.2 6.4-1.4-.7-1.2-2.6.4-5.6C21.1 24 25.6 17.2 30.2 11.9c1.3-1.5 2.4-2.2 3.4-1.9Z" fill="currentColor" opacity=".92"/>
-      </svg>
-    </a>
-    <nav class="nav-links" id="menu">
-      <a href="#services">Servicios</a>
-      <a href="#work">Proyectos</a>
-      <a href="#experience">Proceso</a>
-      <a href="#faq">FAQ</a>
-      <a href="https://libermangonzalez.site/contacto/" class="nav-pill">Hablemos</a>
+    <nav class="dock" aria-label="Principal">
+      <a href="#inicio" data-sec="inicio" aria-label="Inicio" title="Inicio"><img src="assets/nav-inicio.svg" alt="" width="15.83" height="16.67"></a>
+      <a href="#work" data-sec="work" aria-label="Proyectos" title="Proyectos"><img src="assets/nav-proyectos.svg" alt="" width="16.67" height="16.67"></a>
+      <a href="#services" data-sec="services" aria-label="Servicios" title="Servicios"><img src="assets/nav-servicios.svg" alt="" width="16.67" height="16.67"></a>
+      <a href="#contact" data-sec="contact" aria-label="Contacto" title="Contacto"><img src="assets/nav-contacto.svg" alt="" width="16.67" height="15"></a>
     </nav>
-    <button class="nav-toggle" id="toggle" aria-label="Menu" aria-expanded="false"><span></span></button>
   </div>
 </header>
 
 <main>
 
 <!-- ===================== HERO ===================== -->
-<section class="hero">
+<section class="hero" id="inicio">
   <div class="wrap hero-inner">
     <div class="avatar-wrap">
       <div class="avatar">
@@ -771,84 +743,64 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
       <a href="https://libermangonzalez.site/contacto/" class="btn-glow">Cuéntame tu proyecto</a>
       <a href="#work" class="btn-ghost">Ver proyectos</a>
     </div>
-
-    <p class="hero-proof">3 años · proyectos en producción · remoto desde Medellín</p>
   </div>
 </section>
 
 <!-- ===================== CLIENTS ===================== -->
 <section class="clients" aria-label="Marcas con las que he trabajado">
   <div class="cmq" id="cmq">
-    <div class="cbrand"><svg viewBox="0 0 200 34" fill="currentColor" aria-hidden="true"> <path d="M4 24 12 4l8 20-8-6-8 6Z"/><path d="M20 24 28 8l6 16-6-4-8 4Z" opacity=".6"/> <text x="42" y="26" font-family="Satoshi,sans-serif" font-size="24" font-weight="700">Guardianes</text> </svg></div>
-    <div class="cbrand"><svg viewBox="0 0 180 34" fill="currentColor" aria-hidden="true"> <path d="M17 2a15 15 0 1 0 15 15h-6a9 9 0 1 1-9-9V2Z"/> <text x="40" y="26" font-family="Satoshi,sans-serif" font-size="24" font-weight="700">Growthia</text> </svg></div>
-    <div class="cbrand"><svg viewBox="0 0 120 34" fill="currentColor" aria-hidden="true"> <path d="M17 2a15 15 0 0 1 0 30 15 15 0 0 1 0-30Zm0 6a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/> <circle cx="17" cy="17" r="4"/> <text x="40" y="26" font-family="Satoshi,sans-serif" font-size="24" font-weight="700">Ubi</text> </svg></div>
+    <div class="cbrand b-craftlab"><img src="assets/logos-clientes/logo-craftlab.png" alt="CraftLab" loading="lazy" decoding="async"></div>
+    <div class="cbrand b-evora"><img src="assets/logos-clientes/logo-evora.png" alt="Évora" loading="lazy" decoding="async"></div>
+    <div class="cbrand b-growthia"><img src="assets/logos-clientes/logo-growthia.png" alt="Growthia" loading="lazy" decoding="async"></div>
   </div>
 </section>
 
 <!-- ===================== PROBLEMA ===================== -->
 <section class="sec wrap" id="problema">
-  <span class="prob-pill">El problema</span>
   <h2 class="prob-title">Tu sitio ya existe, ¿y aun así no te llega trabajo?</h2>
   <p class="prob-sub">No es falta de presencia. Es lo que pasa después de que alguien entra: no encuentra qué hacer, no confía, o se topa con un paso de más.</p>
 
   <div class="prob-cards">
-
     <article class="prob-card">
-      <div class="viz">
-        <div class="viz-lbl">Visitas al mes</div>
-        <div class="viz-num" data-count="1240">0</div>
-        <div class="bars">
-          <span style="height:62%"></span>
-          <span style="height:74%"></span>
-          <span style="height:58%"></span>
-          <span style="height:81%"></span>
-          <span style="height:69%"></span>
-          <span style="height:77%"></span>
-          <b></b>
-        </div>
-        <div class="viz-foot">
-          <span class="viz-tag">3 mensajes recibidos</span>
-        </div>
+      <div class="pc-top">
+        <div class="pc-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.4 1.4 4.6 3.6 6L4.8 21l4.6-2.2c.8.2 1.7.3 2.6.3 5.5 0 10-3.6 10-8s-4.5-8.1-10-8.1Z"/></svg></div>
+        <h3>Visitas que no preguntan</h3>
       </div>
-      <h3>Visitas que no preguntan</h3>
-      <p>Tu sitio recibe tráfico y aun así nadie escribe. Se ve, pero no genera una sola conversación.</p>
+      <div class="pc-bot">
+        <div class="pc-tags"><span>Sin mensajes</span><span>Sin conversión</span></div>
+        <p>Tu sitio recibe tráfico y aun así nadie escribe. Se ve, pero no genera una sola conversación.</p>
+      </div>
     </article>
-
     <article class="prob-card">
-      <div class="viz">
-        <div class="ring">
-          <svg viewBox="0 0 150 150" aria-hidden="true">
-            <circle class="trackc" cx="75" cy="75" r="65"/>
-            <circle class="spin" cx="75" cy="75" r="53"/>
-            <circle class="arc" cx="75" cy="75" r="65"/>
-          </svg>
-          <div class="ring-mid">
-            <div class="viz-num"><span data-count="66" data-suffix="%">0%</span></div>
-            <div class="viz-lbl">Abandono</div>
-          </div>
-        </div>
-        <div class="viz-foot">
-          <span class="viz-tag">Se pierde en el checkout</span>
-        </div>
+      <div class="pc-top">
+        <div class="pc-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h2.6l.7 2.8h15.1c.7 0 1.2.7 1 1.4l-2 6.9c-.2.6-.7 1-1.4 1H8.5l-.3 1.4h11.3v2H6.7c-.7 0-1.2-.6-1-1.3l.8-3.4L3.9 5H2V3Z"/><circle cx="9.2" cy="20.2" r="1.7"/><circle cx="18.2" cy="20.2" r="1.7"/></svg></div>
+        <h3>El carrito se abandona</h3>
       </div>
-      <h3>El carrito se abandona</h3>
-      <p>La tienda tiene visitas, pero el checkout confunde y el pedido se cae en el último paso.</p>
+      <div class="pc-bot">
+        <div class="pc-tags"><span>Checkout</span><span>Móvil</span></div>
+        <p>La tienda tiene visitas, pero el proceso confunde y el pedido se cae en el último paso.</p>
+      </div>
     </article>
-
     <article class="prob-card">
-      <div class="viz">
-        <div class="viz-lbl">Cambios de esta semana</div>
-        <div class="wk-days"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
-        <div class="week"><i class="hit"></i><i></i><i></i><i class="hit"></i><i></i><i></i><i></i></div>
-        <div class="bar-out"><div class="bar-in"></div></div>
-        <div class="viz-foot">
-          <span class="viz-tag">Pedidos copiados a mano</span>
-        </div>
+      <div class="pc-top">
+        <div class="pc-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7.6a5 5 0 0 1 10 0V10h1a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h1Zm2 0h6V7.6a3 3 0 0 0-6 0V10Z"/></svg></div>
+        <h3>Todo depende de alguien más</h3>
       </div>
-      <h3>Todo depende de alguien más</h3>
-      <p>Cambiar un precio o una foto pasa por otra persona, y los pedidos siguen pasándose a una planilla.</p>
+      <div class="pc-bot">
+        <div class="pc-tags"><span>Dependencia</span><span>Trabajo manual</span></div>
+        <p>Cambiar un precio o una foto pasa por otra persona, y los pedidos siguen copiándose a mano.</p>
+      </div>
     </article>
-
+    <article class="prob-card">
+      <div class="pc-top">
+        <div class="pc-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h8v8H3V3Zm10 0h8v5h-8V3ZM3 13h8v8H3v-8Zm10-3h8v11h-8V10Z"/></svg></div>
+        <h3>Se ve improvisado</h3>
+      </div>
+      <div class="pc-bot">
+        <div class="pc-tags"><span>Diseño</span><span>Confianza</span></div>
+        <p>Al lado de la competencia tu sitio no transmite seriedad, y esa duda frena la decisión de compra.</p>
+      </div>
+    </article>
   </div>
 </section>
 
@@ -859,9 +811,10 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
   <p class="sec-lead rv">Cada proyecto comienza entendiendo qué necesita lograr tu negocio. A partir de ahí definimos una solución digital con un alcance claro, una experiencia coherente y una ruta real hacia el lanzamiento.</p>
   <div class="fcards">
     <article class="fcard rv">
-      <p class="fcard-eyebrow">Diseño</p>
       <div class="fcard-visual">
-        <img src="assets/servicio-01.webp" width="742" height="508" alt="Interfaz de descubrimiento y diseño: buscador, ideas y componentes" loading="lazy" decoding="async">
+        <span class="viz-box">
+          <img src="assets/servicio-01.webp" width="742" height="508" alt="Interfaz de descubrimiento y diseño: buscador, ideas y componentes" loading="lazy" decoding="async">
+        </span>
       </div>
       <div class="fcard-body">
         <h3>Diseño y desarrollo web</h3>
@@ -870,9 +823,10 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
       </div>
     </article>
     <article class="fcard rv">
-      <p class="fcard-eyebrow">Desarrollo</p>
       <div class="fcard-visual">
-        <img src="assets/servicio-02.webp" width="742" height="508" alt="Editor de código con el esquema de datos de un proyecto" loading="lazy" decoding="async">
+        <span class="viz-box">
+          <img src="assets/servicio-02.webp" width="742" height="508" alt="Editor de código con el esquema de datos de un proyecto" loading="lazy" decoding="async">
+        </span>
       </div>
       <div class="fcard-body">
         <h3>Aplicaciones web y mobile</h3>
@@ -881,9 +835,11 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
       </div>
     </article>
     <article class="fcard rv">
-      <p class="fcard-eyebrow">Automatización</p>
       <div class="fcard-visual">
-        <img src="assets/servicio-03.webp" width="742" height="508" alt="Gráfica de crecimiento con dos series de datos" loading="lazy" decoding="async">
+        <span class="viz-box">
+          <img src="assets/servicio-03.webp" width="742" height="508" alt="Gráfica de crecimiento con dos series de datos" loading="lazy" decoding="async">
+          <i class="viz-dot" aria-hidden="true"></i>
+        </span>
       </div>
       <div class="fcard-body">
         <h3>Automatización y medición</h3>
@@ -896,6 +852,9 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
 
 <!-- ===================== WORK ===================== -->
 <section class="work wrap" id="work">
+  <div class="head rv"><h2>Proyectos</h2></div>
+  <p class="sec-desc rv">De un problema concreto a un sitio que ya está funcionando.</p>
+  <p class="sec-lead rv">Una selección de proyectos con su alcance real: qué se construyó, en cuántas páginas y qué cambió al publicarlo.</p>
 
   <article class="case case-1 rv">
     <div class="case-l">
@@ -1021,29 +980,6 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
   </div>
 </section>
 
-<!-- ===================== BIO ===================== -->
-<section class="bio">
-  <div class="rings" aria-hidden="true">
-    <i style="width:290px;height:290px"></i>
-    <i style="width:570px;height:570px"></i>
-    <i style="width:850px;height:850px"></i>
-    <i style="width:1130px;height:1130px"></i>
-    <i style="width:1410px;height:1410px"></i>
-    <i style="width:1690px;height:1690px"></i>
-  </div>
-  <div class="wrap">
-    <p class="bio-copy rv">Diseño y construyo
-      <span class="chip"><u><span>páginas web<br>tiendas online<br>landings<br>sitios corporativos<br>rediseños<br>páginas web</span></u></span>
-      para negocios que necesitan verse profesionales y vender mejor.
-      <span class="chip"><u><span>3 años<br>3 años<br>3 años<br>3 años<br>3 años<br>3 años</span></u></span> de práctica sobre una base de seis en
-      marketing y diseño. Trabajo cerca del
-      <span class="chip"><u><span>código<br>HTML<br>CSS<br>componente<br>handoff<br>código</span></u></span>
-      y de la medición. Base en
-      <span class="chip"><u><span>Medellín<br>Colombia<br>Medellín<br>Colombia<br>Medellín<br>Medellín</span></u></span>, modalidad remota.
-    </p>
-  </div>
-</section>
-
 <!-- ===================== FAQ ===================== -->
 <section class="sec wrap" id="faq">
   <div class="head rv"><h2>Preguntas frecuentes</h2></div>
@@ -1159,21 +1095,8 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
     }).join(' ');
   }
 
-  function fmt(v,dec){return v.toLocaleString('es-ES',{minimumFractionDigits:dec,maximumFractionDigits:dec})}
-  function countUp(el){
-    var to=parseFloat(el.dataset.count), suf=el.dataset.suffix||'', dec=(to%1?1:0), t0=null;
-    if(reduce){el.textContent=fmt(to,dec)+suf;return}
-    requestAnimationFrame(function step(t){
-      if(!t0)t0=t;
-      var pr=Math.min(1,(t-t0)/2000), e=1-Math.pow(1-pr,3);
-      el.textContent=fmt(to*e,dec)+suf;
-      if(pr<1) requestAnimationFrame(step);
-    });
-  }
-
   if(!('IntersectionObserver' in window)){
     sec.classList.add('on');
-    sec.querySelectorAll('[data-count]').forEach(countUp);
     return;
   }
   new IntersectionObserver(function(en,o){
@@ -1181,7 +1104,6 @@ main,footer.foot{position:relative;z-index:1}   /* el nav ya es fixed con z-inde
       if(!e.isIntersecting) return;
       o.unobserve(e.target);
       sec.classList.add('on');
-      sec.querySelectorAll('[data-count]').forEach(countUp);
     });
   },{threshold:.2}).observe(sec);
 })();
@@ -1263,15 +1185,22 @@ document.querySelectorAll('.faq-q').forEach(function(btn){
 
 /* ---------- nav ---------- */
 (function(){
-  var nav=document.getElementById('nav'), tog=document.getElementById('toggle');
+  var nav=document.getElementById('nav');
   addEventListener('scroll',function(){nav.classList.toggle('stuck',scrollY>20)},{passive:true});
-  tog.addEventListener('click',function(){
-    var open=document.body.classList.toggle('menu');
-    tog.setAttribute('aria-expanded',open?'true':'false');
-  });
-  document.querySelectorAll('#menu a').forEach(function(a){
-    a.addEventListener('click',function(){document.body.classList.remove('menu');tog.setAttribute('aria-expanded','false')});
-  });
+
+  /* el item activo sigue a la seccion visible */
+  var links=[].slice.call(document.querySelectorAll('.dock a[data-sec]')),
+      secs=links.map(function(a){return document.getElementById(a.dataset.sec)});
+  if(links.length && 'IntersectionObserver' in window){
+    var vis={};
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){vis[e.target.id]=e.isIntersecting?e.intersectionRatio:0});
+      var best='',top=0;
+      for(var k in vis){if(vis[k]>top){top=vis[k];best=k}}
+      if(best) links.forEach(function(a){a.classList.toggle('active',a.dataset.sec===best)});
+    },{threshold:[0,.15,.35,.6,1],rootMargin:'-101px 0px -45% 0px'});
+    secs.forEach(function(el){if(el) io.observe(el)});
+  }
 })();
 </script>
 </body>
